@@ -1,0 +1,1 @@
+Combat encounter initiative tracker for D&D's combat encounters. Besides inititive, can also track health, conditions and resources.
