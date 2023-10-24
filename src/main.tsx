@@ -6,7 +6,7 @@ import {
 	createBrowserRouter,
 	RouterProvider,
 } from "react-router-dom";
-import { ChakraBaseProvider } from '@chakra-ui/react';
+import { Button, ChakraBaseProvider, ChakraProvider, extendBaseTheme } from '@chakra-ui/react';
 import { NotFound } from './components/NotFound.tsx';
 import { InitiativeList } from './components/InitiativeList.tsx';
 
@@ -17,19 +17,20 @@ const router = createBrowserRouter([{
 	children: [{
 		index: true,
 		element: <InitiativeList />,
-	},
-	// {
-	// 	path: "/item/:itemID",
-	// 	element: <Item />
-	// }
-	]
+	}]
 }]);
 
+// const theme = extendBaseTheme({
+// 	components: {
+// 		Button,
+// 		Badge,
+// 	}
+// });
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
-		<ChakraBaseProvider>
+		<ChakraProvider>
 			<RouterProvider router={router} />
-		</ChakraBaseProvider>
+		</ChakraProvider>
 	</React.StrictMode>,
 )

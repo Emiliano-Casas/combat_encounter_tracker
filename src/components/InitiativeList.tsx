@@ -1,27 +1,34 @@
-import { Box, Text, Container, Stack, Grid, Button, GridItem, Card, CardBody, Heading, CardFooter } from "@chakra-ui/react";
+import { Box, Text, Container, Stack, Grid, Button, GridItem, Card, CardBody, Heading, CardFooter, Badge } from "@chakra-ui/react";
+import { palette, turn } from "../constants";
 
 export function InitiativeList() {
-	const turns = [{ init: 3 }, { init: 1 }, { init: 2 }]
+	const turns: turn[] = [
+		{
+			initiative: 3, name: "name_1", hp: 14, conditions: [
+				{ name: "condition_1", roundCounter: 3 },
+				{ name: "condition_2", roundCounter: 2 },
+				{ name: "condition_3" }
+			]
+		},
+		{ initiative: 1, name: "name_2", conditions: [] },
+		{ initiative: 2, name: "name_3", conditions: [] }
+	]
 
 	return (
-		<Container backgroundColor={'tomato'}>
-			<Grid templateColumns={'1fr 1fr 1fr'}>
-				<GridItem bg={'purple.300'} gridColumn={2} display="flex" justifyContent={'center'}>
-					<Text>Round 5</Text>
-				</GridItem>
-				<GridItem bg={'green.300'} gridColumn={3} display="flex" justifyContent="end">
-					<Button>Add</Button>
-				</GridItem>
-			</Grid>
+		// <Container backgroundColor={palette.lion1} border='2rem' borderColor={"white"}>
+		<Container>
 			<Stack>
-				{turns.map((turn) => (
-					<Card bg='blue.300' borderRadius={50}>
-						<CardBody>
-							<Text>{turn.init}</Text>
-							<Text>View a summary of all your customers over the last month.</Text>
+				{turns.map((turn, idx) => (
+					<Card key={idx} borderRadius={5} border='1px' borderColor='black'>
+						<CardBody >
+							<Text>{turn.initiative}</Text>
+							<Text>{turn.name}</Text>
+							<Text>{turn.hp}</Text>
 						</CardBody>
 						<CardFooter display={'flex'} flexDirection={'row'} justifyContent={'center'}>
-							<Text>Poisoned</Text><Text>Slowed</Text><Text>Paralyzed</Text>
+							{turn.conditions.map((condition) => (
+								<Badge colorScheme="red">{condition.name} {condition.roundCounter}</Badge>
+							))}
 						</CardFooter>
 					</Card>
 				))}
