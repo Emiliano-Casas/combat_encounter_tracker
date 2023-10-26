@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import { Button, ChakraBaseProvider, ChakraProvider, extendBaseTheme } from '@chakra-ui/react';
 import { NotFound } from './components/NotFound.tsx';
-import { InitiativeList } from './components/InitiativeList.tsx';
+import { TurnList } from './components/TurnList.tsx';
 
 const router = createBrowserRouter([{
 	path: "/",
@@ -16,7 +16,7 @@ const router = createBrowserRouter([{
 	errorElement: <NotFound />,
 	children: [{
 		index: true,
-		element: <InitiativeList />,
+		element: <TurnList />,
 	}]
 }]);
 
