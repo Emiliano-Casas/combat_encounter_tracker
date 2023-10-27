@@ -2,26 +2,92 @@ import './App.css';
 import { Outlet } from 'react-router';
 import { Nav } from './components/Nav';
 import { Container } from '@chakra-ui/react';
-import { palette } from "./constants"
+import { palette, turn } from "./constants"
+import {
+	createBrowserRouter,
+	RouterProvider,
+} from "react-router-dom";
+import { NotFound } from './components/NotFound.tsx';
+import { TurnList } from './components/TurnList.tsx';
+
+const turns: turn[] = [
+	{
+		initiative: 33, name: "name_1", hp: 14, conditions: [
+			{ name: "condition_1", roundCounter: 3 },
+			{ name: "condition_2", roundCounter: 2 },
+			{ name: "condition_3" }
+		]
+	},
+	{ initiative: 1, name: "name_2", hp: null, conditions: [] },
+	{
+		initiative: 7, name: "name_3", hp: null, conditions: [
+			{ name: "condition_1", roundCounter: 3 },
+			{ name: "condition_2", roundCounter: 2 },
+			{ name: "condition_3" }]
+	},
+	{ initiative: 2, name: "name_4", hp: 14, conditions: [] },
+	{
+		initiative: 33, name: "name_1", hp: 14, conditions: [
+			{ name: "condition_1", roundCounter: 3 },
+			{ name: "condition_2", roundCounter: 2 },
+			{ name: "condition_3" }
+		]
+	},
+	{ initiative: 1, name: "name_2", hp: null, conditions: [] },
+	{
+		initiative: 7, name: "name_3", hp: null, conditions: [
+			{ name: "condition_1", roundCounter: 3 },
+			{ name: "condition_2", roundCounter: 2 },
+			{ name: "condition_3" }]
+	},
+	{ initiative: 2, name: "name_4", hp: 14, conditions: [] },
+	{
+		initiative: 33, name: "name_1", hp: 14, conditions: [
+			{ name: "condition_1", roundCounter: 3 },
+			{ name: "condition_2", roundCounter: 2 },
+			{ name: "condition_3" }
+		]
+	},
+	{ initiative: 1, name: "name_2", hp: null, conditions: [] },
+	{
+		initiative: 7, name: "name_3", hp: null, conditions: [
+			{ name: "condition_1", roundCounter: 3 },
+			{ name: "condition_2", roundCounter: 2 },
+			{ name: "condition_3" }]
+	},
+	{ initiative: 2, name: "name_4", hp: 14, conditions: [] }
+]
+
+const router = createBrowserRouter([{
+	path: "/",
+	element: <App />,
+	errorElement: <NotFound />,
+	children: [{
+		index: true,
+		element: <TurnList {...turns} />,
+	}]
+}]);
 
 function App() {
 
 	return (
-		<Container
-			height="100vh"
-			display="flex"
-			flexDir={"column"}
-			bg={palette.lion1}
-			padding="0"
-			borderTop="0.5rem"
-			borderX="0.5rem"
-			borderStyle="ridge"
-			borderColor={palette.cadet_gray}
-			bgImage={bgImgURI}
+		<RouterProvider router={router}>
+			<Container
+				height="100vh"
+				display="flex"
+				flexDir={"column"}
+				bg={palette.lion1}
+				padding="0"
+				borderTop="0.5rem"
+				borderX="0.5rem"
+				borderStyle="ridge"
+				borderColor={palette.cadet_gray}
+				bgImage={bgImgURI}
 			>
-			<Nav></Nav>
-			<Outlet></Outlet>
-		</Container>
+				<Nav></Nav>
+				<Outlet {...turns}></Outlet>
+			</Container>
+		</RouterProvider>
 	)
 }
 

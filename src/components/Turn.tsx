@@ -24,65 +24,65 @@ export function Turn(turn: turn) {
 				textColor={'white'}
 				padding="1"
 				zIndex={1}>
-			{turn.initiative}
-		</Text>
-			{/* Name */ }
-	<Text
-		position="absolute"
-		bg={palette.onyx}
-		pl="9"
-		pr="2"
-		fontSize={"md"}
-		border={".1rem"}
-		borderStyle={"outset"}
-		borderColor={palette.cadet_gray}
-		textColor="white"
-		borderRadius={5}>
-		{turn.name}
-	</Text>
-	{/* HP */ }
-	<CardBody
-		padding="0"
-		minHeight={"2rem"}>
-		{turn.hp !== null &&
-			<Text
-				paddingX="0.5rem"
-				bg={palette.rosewood}
-				borderRadius={"0.5rem"}
-				border="0.2rem"
-				borderStyle="ridge"
-				borderColor={palette.dim_gray}
-				align={"right"}
-				color="white"
-				fontSize={"2xl"}>
-				{turn.hp}
+				{turn.initiative}
 			</Text>
-		}
-	</CardBody>
-	{/* CONDITIONS */ }
-	{
-		turn.conditions.length > 0 &&
-			<CardFooter
-				paddingY="0.25rem"
-				display={'flex'}
-				flexDirection={'row'}
-				justifyContent={'center'}
-				bg={palette.khaki}
-				marginTop=".5rem"
-				borderRadius="0.5rem"
-				border="0.2em"
-				borderStyle="inset"
-				borderColor={palette.khaki}>
-				{turn.conditions.map((condition, idx) => (
-					<Badge
-						key={idx}
-						colorScheme="red"
-						marginX={"0.1rem"}>
-						{condition.name} {condition.roundCounter}
-					</Badge>
-				))}
-			</CardFooter>
-	}
+			{/* Name */}
+			<Text
+				position="absolute"
+				bg={palette.onyx}
+				pl="9"
+				pr="2"
+				fontSize={"md"}
+				border={".1rem"}
+				borderStyle={"outset"}
+				borderColor={palette.cadet_gray}
+				textColor="white"
+				borderRadius={5}>
+				{turn.name}
+			</Text>
+			{/* HP */}
+			<CardBody
+				padding="0"
+				minHeight={"2rem"}>
+				{turn.hp !== null &&
+					<Text
+						paddingX="0.5rem"
+						bg={palette.rosewood}
+						align={"right"}
+						color="white"
+						fontSize={"2xl"}
+						borderRadius="0.5rem"
+						border="0.2em"
+						borderStyle="inset"
+						borderColor={palette.khaki}>
+						{turn.hp}
+					</Text>
+				}
+			</CardBody>
+			{/* CONDITIONS */}
+			{
+				turn.conditions.length > 0 &&
+				<CardFooter
+					paddingY="0.25rem"
+					display={'flex'}
+					flexDirection={'row'}
+					justifyContent={'center'}
+					bg={palette.khaki}
+					marginTop=".5rem"
+					borderRadius="0.5rem"
+					border="0.2em"
+					borderStyle="inset"
+					borderColor={palette.khaki}>
+					{turn.conditions.map((condition, idx) => (
+						<Badge
+							key={idx}
+							colorScheme="red"
+							marginX={"0.1rem"}>
+							{condition.name} {condition.roundCounter}
+						</Badge>
+					))}
+				</CardFooter>
+			}
 		</Card >
 	)
 }
