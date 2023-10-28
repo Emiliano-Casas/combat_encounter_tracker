@@ -1,12 +1,11 @@
-import { Button, Text, Container, Grid, GridItem, HStack } from "@chakra-ui/react";
+import { Button, Text, Container, Grid, GridItem } from "@chakra-ui/react";
 import { palette } from "../constants";
 
-// const buttonCSS = sx({
-// 	variant: "ghost",
-// 	textColor: "white"
-// });
+type navProps = {
+	round: number
+}
 
-export function Nav() {
+export function Nav({ round }: navProps) {
 	return (
 		<Container
 			boxShadow="0px 5px 7px 0px rgba(0, 0, 0, 0.50);"
@@ -51,7 +50,7 @@ export function Nav() {
 							'-webkit-text-stroke-width': "0.05em",
 							"-webkit-text-stroke-color": "black"
 						}}>
-						Round 5
+						Round {round}
 					</Text>
 				</GridItem>
 				<GridItem

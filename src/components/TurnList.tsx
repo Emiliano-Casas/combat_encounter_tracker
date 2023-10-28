@@ -3,25 +3,31 @@ import { turn } from "../constants";
 import { Turn } from "./Turn";
 import { useEffect, useRef } from "react";
 
-export function TurnList(turns:turn[]) {
+type TurnlistProps = {
+	turns: turn[]
+}
+
+export function TurnList({ turns }: TurnlistProps) {
 	const ref = useRef<HTMLDivElement>(null);
 	useEffect(() => {
-		ref.current!.addEventListener("scrollend", handleScrollend);
-		console.log("added");
+		const turnList = ref.current!;
+		if (turnList.offsetHeight < turnList.scrollHeight) {
+			console.log("OFFSET: add more");
+		}
+		turnList.addEventListener("scrollend", handleScrollend);
 		return (() => {
-			ref.current!.removeEventListener("scrollend", handleScrollend);
-			console.log("removed");
+			turnList.removeEventListener("scrollend", handleScrollend);
 		})
 	});
 
 	const handleScrollend = (event: Event) => {
-		console.log("handleScrollend");
+		console.log("SCROLLEND: add more");
 	};
+
 	return (
 		<Stack
 			ref={ref}
 			overflowY="auto"
-			// onScrollCapture={(event) => {console.log("scrollCapture: "); console.log(event)}}
 			sx={{
 				'&::-webkit-scrollbar': { display: "none" }
 			}}>
