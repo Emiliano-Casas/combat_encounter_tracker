@@ -1,65 +1,57 @@
 import './App.css';
 import { Nav } from './components/Nav';
-import { Container } from '@chakra-ui/react';
-import { palette, turn } from "./constants"
-import { NotFound } from './components/NotFound.tsx';
-import { TurnList } from './components/TurnList.tsx';
-import { useState } from 'react';
+import { Container, Stack } from '@chakra-ui/react';
+import { palette, Round, Turn } from "./constants"
+import { TurnList } from './components/TurnList';
+import { useEffect, useRef, useState } from 'react';
 
-const testRound: turn[] = [
-	{
-		initiative: 33, name: "name_1", hp: 14, conditions: [
-			{ name: "condition_1", roundCounter: 3 },
-			{ name: "condition_2", roundCounter: 2 },
-			{ name: "condition_3" }
-		]
-	},
-	{ initiative: 1, name: "name_2", hp: null, conditions: [] },
-	{
-		initiative: 7, name: "name_3", hp: null, conditions: [
-			{ name: "condition_1", roundCounter: 3 },
-			{ name: "condition_2", roundCounter: 2 },
-			{ name: "condition_3" }]
-	},
-	{ initiative: 2, name: "name_4", hp: 14, conditions: [] },
-	// {
-	// 	initiative: 33, name: "name_1", hp: 14, conditions: [
-	// 		{ name: "condition_1", roundCounter: 3 },
-	// 		{ name: "condition_2", roundCounter: 2 },
-	// 		{ name: "condition_3" }
-	// 	]
-	// },
-	// { initiative: 1, name: "name_2", hp: null, conditions: [] },
-	// {
-	// 	initiative: 7, name: "name_3", hp: null, conditions: [
-	// 		{ name: "condition_1", roundCounter: 3 },
-	// 		{ name: "condition_2", roundCounter: 2 },
-	// 		{ name: "condition_3" }]
-	// },
-	// { initiative: 2, name: "name_4", hp: 14, conditions: [] },
-	// {
-	// 	initiative: 33, name: "name_1", hp: 14, conditions: [
-	// 		{ name: "condition_1", roundCounter: 3 },
-	// 		{ name: "condition_2", roundCounter: 2 },
-	// 		{ name: "condition_3" }
-	// 	]
-	// },
-	// { initiative: 1, name: "name_2", hp: null, conditions: [] },
-	// {
-	// 	initiative: 7, name: "name_3", hp: null, conditions: [
-	// 		{ name: "condition_1", roundCounter: 3 },
-	// 		{ name: "condition_2", roundCounter: 2 },
-	// 		{ name: "condition_3" }]
-	// },
-	// { initiative: 2, name: "name_4", hp: 14, conditions: [] }
-]
+var savedRound1: Round = {
+	id: "asdf",
+	turns: [
+		{
+			initiative: 33, name: "name_1", hp: 14, conditions: [
+				{ name: "condition_1", roundCounter: 3 },
+				{ name: "condition_2", roundCounter: 2 },
+				{ name: "condition_3" }
+			]
+		},
+		{ initiative: 1, name: "name_2", hp: null, conditions: [] },
+		{
+			initiative: 7, name: "name_3", hp: null, conditions: [
+				{ name: "condition_1", roundCounter: 3 },
+				{ name: "condition_2", roundCounter: 2 },
+				{ name: "condition_3" }]
+		},
+		{ initiative: 2, name: "name_4", hp: 14, conditions: [] }
+	]
+};
 
 function App() {
-	const [round, setRound] = useState(testRound)
-	const [roundNum, setRoundNum] = useState(1);
+	const listRef = useRef<HTMLDivElement>(null);
+	const initRound: Round = savedRound1;
+	const rounds: Round[] = [initRound];
+	var roundNum = 1;
+
+	useEffect(() => {
+		const listStack = listRef.current!;
+		listStack.addEventListener("scrollend", checkListHeight);
+		checkListHeight();
+		return (() => {
+			listStack.removeEventListener("scrollend", checkListHeight);
+		})
+	}, []);
+
+	function checkListHeight() {
+		const listStack = listRef.current!;
+		if (listStack.clientHeight > listStack.offsetHeight) {
+			console.log("all güt")
+		} else {
+			console.log("more rounds");
+			rounds.push(initRound);
+		}
+	}
 
 	return (
-		// <RouterProvider router={router}>
 		<Container
 			height="100vh"
 			display="flex"
@@ -70,13 +62,17 @@ function App() {
 			borderX="0.5rem"
 			borderStyle="ridge"
 			borderColor={palette.cadet_gray}
-			bgImage={bgImgURI}
-		>
+			bgImage={bgImgURI}>
 			<Nav round={roundNum}></Nav>
-			{/* <Outlet {...turns}></Outlet> */}
-			<TurnList turns={round}></TurnList>
+			<Stack
+				ref={listRef}
+				overflowY="auto"
+				sx={{
+					'&::-webkit-scrollbar': { display: "none" }
+				}}>
+				<TurnList rounds={rounds}></TurnList>
+			</Stack>
 		</Container>
-		// </RouterProvider>
 	)
 }
 

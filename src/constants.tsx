@@ -22,15 +22,21 @@ export const palette = {
 	dim_gray: "#69686e"
 }
 
-type condition = {
+type Condition = {
 	name: string,
 	roundCounter?: number
 }
 
-export type turn = {
+export type Turn = {
 	initiative: number,
 	name: string,
+	id?: string
 	hp?: number | null,
-	conditions: condition[]
+	conditions: Condition[]
 	initMod?: number
+}
+
+export type Round = {
+	id?: string,
+	turns: Turn[]
 }

@@ -1,7 +1,7 @@
 import { Badge, Card, CardBody, CardFooter, Text } from '@chakra-ui/react'
-import { palette, turn } from '../constants'
+import { palette, Turn } from '../constants'
 
-export function Turn(turn: turn) {
+export function TurnCard(turn: Turn) {
 	return (
 		<Card
 			bg={palette.khaki_light}

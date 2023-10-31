@@ -1,41 +1,25 @@
-import { Stack } from "@chakra-ui/react";
-import { turn } from "../constants";
-import { Turn } from "./Turn";
+import { Stack, Text } from "@chakra-ui/react";
+import { Round, Turn } from "../constants";
+import { TurnCard } from "./TurnCard";
 import { useEffect, useRef } from "react";
 
-type TurnlistProps = {
-	turns: turn[]
-}
 
-export function TurnList({ turns }: TurnlistProps) {
-	const ref = useRef<HTMLDivElement>(null);
-	useEffect(() => {
-		const turnList = ref.current!;
-		if (turnList.offsetHeight < turnList.scrollHeight) {
-			console.log("OFFSET: add more");
-		}
-		turnList.addEventListener("scrollend", handleScrollend);
-		return (() => {
-			turnList.removeEventListener("scrollend", handleScrollend);
-		})
+export function TurnList({ rounds }: {
+	rounds: Round[]
+}) {
+	const roundsList: any[] = [];
+	rounds.map((round, idx) => {
+		roundsList.push(<Text key={"round_" + idx}>Round {idx + 1}</Text>);
+		const turns = round.turns.map((turn, idx) => {
+			return (
+				<TurnCard key={"turn_" + idx} {...turn}></TurnCard>
+			);
+		});
+		roundsList.push(turns);
 	});
-
-	const handleScrollend = (event: Event) => {
-		console.log("SCROLLEND: add more");
-	};
-
 	return (
-		<Stack
-			ref={ref}
-			overflowY="auto"
-			sx={{
-				'&::-webkit-scrollbar': { display: "none" }
-			}}>
-			{
-				turns.map((turn, idx) => (
-					<Turn key={idx} {...turn}></Turn>
-				))
-			}
-		</Stack >
+		<>
+			{roundsList}
+		</>
 	)
 }
