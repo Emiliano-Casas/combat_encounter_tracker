@@ -1,9 +1,10 @@
 import './App.css';
 import { Nav } from './components/Nav';
-import { Container } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { palette, Round } from "./constants"
 import { TurnList } from './components/TurnList';
 import { useState } from 'react';
+import { Footer } from './components/Footer';
 
 const savedRound1: Round = {
 	id: "asdf",
@@ -41,22 +42,20 @@ function App() {
 	}
 
 	return (
-		<Container
+		<Box
+			bg="#f2e6f7"
 			height="100vh"
+			minWidth="100%"
 			display="flex"
 			flexDir={"column"}
-			bg={palette.lion1}
-			padding="0"
-			borderTop="0.5rem"
-			borderX="0.5rem"
-			borderStyle="ridge"
-			borderColor={palette.cadet_gray}>
+			padding="0">
 			<Nav
 				roundNum={roundNum} />
 			<TurnList
 				rounds={rounds}
 				updateRounds={updateRounds}></TurnList>
-		</Container>
+			<Footer></Footer>
+		</Box>
 	)
 }
 

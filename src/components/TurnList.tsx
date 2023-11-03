@@ -10,35 +10,8 @@ export function TurnList({ rounds, updateRounds }: {
 }) {
 	const stackRef = useRef<HTMLDivElement>(null);
 
-	useEffect(() => {
-		const listStack = stackRef.current;
-		const fillRoundsList = () => {
-			if (listStack) {
-				if (listStack.scrollTop + listStack.clientHeight >= listStack.scrollHeight) {
-					// Reached the bottom of the scrollable content
-					updateRounds([...rounds, rounds[0]]);
-				}
-			}
-		};
-		fillRoundsList();
-		if (listStack) {
-			listStack.addEventListener("scroll", fillRoundsList);
-		}
-		return () => {
-			if (listStack) {
-				listStack.removeEventListener("scroll", fillRoundsList);
-			}
-		};
-	}, [rounds, updateRounds]);
-
 	const roundsList: any[] = [];
 	rounds.map((round, idx) => {
-		roundsList.push(
-			<Text
-				textAlign={"center"}
-				key={"round_" + idx}>Round {idx + 1}
-			</Text>
-		);
 		const turns = round.turns.map((turn, idx) => {
 			return (
 				<TurnCard key={"turn_" + idx} {...turn}></TurnCard>
@@ -55,11 +28,14 @@ export function TurnList({ rounds, updateRounds }: {
 				'&::-webkit-scrollbar': { display: "none" }
 			}}>
 			{roundsList}
-			{/* <Box
-			marginY="4rem"></Box> */}
-			<Spinner
-				marginY="3rem"
-				alignSelf={"center"}></Spinner>
+			<Box
+				display={"flex"}
+				justifyContent={"center"}
+				alignItems={"center"}
+				marginY="2rem">
+				{/* <Spinner
+					alignSelf={"center"}></Spinner> */}
+			</Box>
 		</Stack>
 	)
 }
