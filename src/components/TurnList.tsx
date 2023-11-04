@@ -1,7 +1,7 @@
-import { Box, Spinner, Stack, Text } from "@chakra-ui/react";
-import { Round, Turn } from "../constants";
+import { Box, Stack } from "@chakra-ui/react";
+import { Round } from "../constants";
 import { TurnCard } from "./TurnCard";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
 
 export function TurnList({ rounds, updateRounds }: {
@@ -21,21 +21,14 @@ export function TurnList({ rounds, updateRounds }: {
 	});
 
 	return (
-		<Stack
+		<Box
 			ref={stackRef}
+			width="100%"
 			overflowY="auto"
 			sx={{
 				'&::-webkit-scrollbar': { display: "none" }
 			}}>
 			{roundsList}
-			<Box
-				display={"flex"}
-				justifyContent={"center"}
-				alignItems={"center"}
-				marginY="2rem">
-				{/* <Spinner
-					alignSelf={"center"}></Spinner> */}
-			</Box>
-		</Stack>
+		</Box>
 	)
 }

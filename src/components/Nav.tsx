@@ -1,5 +1,6 @@
-import { Button, Text, Box, Grid, GridItem, css, Container } from "@chakra-ui/react";
+import { Button, Text, Box, Heading } from "@chakra-ui/react";
 import { palette } from "../constants";
+import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 
 export function Nav({ roundNum }: {
 	roundNum: number
@@ -11,36 +12,28 @@ export function Nav({ roundNum }: {
 			borderBottom="solid 0.1rem">
 			<Box
 				marginX="auto"
-				maxWidth="40%"
+				maxWidth="640px"
 				display="flex"
 				justifyContent={"space-between"}
 				alignItems={"center"}
 			>
 				<Button
-					bg="white"
-					border="solid 1 black"
-					variant="outline"
-					_after={{
-						bg: "black",
-						position: "absolute",
-						content: '',
-						top: "8px",
-						left: "8px",
-						right: "8px",
-						bottom: "8px",
-						zIndex:"-1"
-					}}
+					border="solid 1px black"
+					borderRadius="16px"
+					boxShadow={"4px 4px 0 black"}
 				>
-					Clear
+					<ArrowBackIcon
+						boxSize={5} />
 				</Button>
-				{/* <Container> */}
-				<Text>
+				<Heading>
 					Round {roundNum}
-				</Text>
-				{/* </Container> */}
+				</Heading>
 				<Button
-					minWidth="4rem" colorScheme="teal">
-					Add
+					border="solid 1px black"
+					borderRadius="16px"
+					boxShadow={"4px 4px 0 black"}>
+					<ArrowForwardIcon
+						boxSize={5} />
 				</Button>
 			</Box>
 		</Box >
