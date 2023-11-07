@@ -40,3 +40,5 @@ export type Round = {
 	id?: string,
 	turns: Turn[]
 }
+
+export const listWidth = "540px"

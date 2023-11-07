@@ -1,5 +1,5 @@
-import { Button, Text, Box, Heading } from "@chakra-ui/react";
-import { palette } from "../constants";
+import { Button, Box, Heading } from "@chakra-ui/react";
+import { listWidth } from "../constants";
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 
 export function Nav({ roundNum }: {
@@ -12,7 +12,7 @@ export function Nav({ roundNum }: {
 			borderBottom="solid 0.1rem">
 			<Box
 				marginX="auto"
-				maxWidth="640px"
+				maxWidth={listWidth}
 				display="flex"
 				justifyContent={"space-between"}
 				alignItems={"center"}
@@ -21,6 +21,7 @@ export function Nav({ roundNum }: {
 					border="solid 1px black"
 					borderRadius="16px"
 					boxShadow={"4px 4px 0 black"}
+					paddingX="0.7em"
 				>
 					<ArrowBackIcon
 						boxSize={5} />
@@ -31,9 +32,9 @@ export function Nav({ roundNum }: {
 				<Button
 					border="solid 1px black"
 					borderRadius="16px"
-					boxShadow={"4px 4px 0 black"}>
-					<ArrowForwardIcon
-						boxSize={5} />
+					boxShadow={"4px 4px 0 black"}
+					paddingX="0.7em">
+					<ArrowForwardIcon boxSize={5}/>
 				</Button>
 			</Box>
 		</Box >

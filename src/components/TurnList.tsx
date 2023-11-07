@@ -1,5 +1,5 @@
 import { Box, Stack } from "@chakra-ui/react";
-import { Round } from "../constants";
+import { Round, listWidth } from "../constants";
 import { TurnCard } from "./TurnCard";
 import { useRef } from "react";
 
@@ -22,9 +22,13 @@ export function TurnList({ rounds, updateRounds }: {
 
 	return (
 		<Box
+			display="flex"
+			flexDir={"column"}
+			alignItems="center"
 			ref={stackRef}
 			width="100%"
 			overflowY="auto"
+			paddingX="0.5rem"
 			sx={{
 				'&::-webkit-scrollbar': { display: "none" }
 			}}>

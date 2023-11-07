@@ -10,6 +10,27 @@ const savedRound1: Round = {
 	id: "asdf",
 	turns: [
 		{
+			initiative: 33, name: "Volothamp Geddharm", hp: 14, conditions: [
+				{ name: "Volothamp Geddharm", roundCounter: 3 },
+				{ name: "condition_2", roundCounter: 2 },
+				{ name: "condition_3" },
+				{ name: "condition_4" },
+				{ name: "condition_5" },
+				{ name: "condition_6" },
+				{ name: "condition_7" },
+				{ name: "condition_8" },
+				{ name: "condition_9" }
+			]
+		},
+		{ initiative: 1, name: "name_2", hp: null, conditions: [] },
+		{
+			initiative: 7, name: "name_3", hp: null, conditions: [
+				{ name: "condition_1", roundCounter: 3 },
+				{ name: "condition_2", roundCounter: 2 },
+				{ name: "condition_3" }]
+		},
+		{ initiative: 2, name: "name_4", hp: 14, conditions: [] },
+		{
 			initiative: 33, name: "name_1", hp: 14, conditions: [
 				{ name: "condition_1", roundCounter: 3 },
 				{ name: "condition_2", roundCounter: 2 },
@@ -55,7 +76,6 @@ function App() {
 
 	return (
 		<Box
-			// bg="#f2e6f7"
 			height="100vh"
 			minWidth="100%"
 			display="flex"
@@ -65,8 +85,8 @@ function App() {
 				roundNum={roundNum} />
 			<TurnList
 				rounds={rounds}
-				updateRounds={updateRounds}></TurnList>
-			<Footer/>
+				updateRounds={updateRounds} />
+			<Footer />
 		</Box>
 	)
 }
