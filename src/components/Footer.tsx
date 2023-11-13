@@ -1,16 +1,32 @@
 import { Button, Text, Box } from "@chakra-ui/react";
-import { palette } from "../constants";
 import { listWidth } from "../constants";
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons'
 import { Icon } from '@chakra-ui/react'
 import { FaSave, FaDownload } from 'react-icons/fa'
-
+import { RoundContext } from "../RoundProvider";
+import { useContext } from "react";
 
 export function Footer() {
+	// const { round, changeRound } = useContext(RoundContext);
+	const { round, changeRound } = useContext(RoundContext);
+
+	function addRound() {
+		console.log("addRound");
+		const newRound = { ...round };
+		round.turns.push({
+			initiative: 7, name: "NEW", hp: null, conditions: [
+				{ name: "condition_1", roundCounter: 3 },
+				{ name: "condition_2", roundCounter: 2 },
+				{ name: "condition_3" }]
+		});
+		changeRound(newRound);
+	}
+
 	return (
 		<Box
 			bg="#cce5e5"
 			padding="1rem"
+			paddingBottom={"0"}
 			borderTop="solid 0.1rem"
 			position="relative">
 			<Box
@@ -28,16 +44,19 @@ export function Footer() {
 					height="3em"
 					border="solid 1px black"
 					borderRadius="50%"
-					boxShadow={"4px 4px 0 black"}>
-					<AddIcon
-					/>
+					boxShadow={"4px 4px 0 black"}
+					zIndex={1}
+					onClick={addRound}>
+					<AddIcon />
 				</Button>
 				<Button
 					border="solid 1px black"
 					borderRadius="16px"
 					boxShadow={"4px 4px 0 black"}
 					paddingX="0.7em"
-					columnGap={"0.5em"}>
+					columnGap={"0.5em"}
+					marginBottom="1rem"
+				>
 					<Icon
 						as={FaDownload} />
 					<Text>Load</Text>
@@ -46,8 +65,9 @@ export function Footer() {
 					width="4rem"
 					fontSize="lg"
 					variant="ghost"
-					padding={"0"}
-					alignSelf={"end"}>
+					alignSelf={"end"}
+					marginBottom={"0.2rem"}
+				>
 					<Icon
 						as={DeleteIcon}></Icon>
 				</Button>
@@ -56,7 +76,8 @@ export function Footer() {
 					borderRadius="16px"
 					boxShadow={"4px 4px 0 black"}
 					paddingX="0.7em"
-					columnGap={"0.5em"}>
+					columnGap={"0.5em"}
+					marginBottom="1rem">
 					<Icon
 						as={FaSave} />
 					<Text>Save</Text>

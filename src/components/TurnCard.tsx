@@ -1,16 +1,56 @@
-import { Box, Card, CardBody, Flex, Input, Text, Container } from '@chakra-ui/react'
-import { Turn, listWidth } from '../constants'
-import { AddIcon, MinusIcon } from '@chakra-ui/icons'
+import {
+	Box,
+	Card,
+	CardBody,
+	Flex,
+	Input,
+	Text,
+	Container,
+	defineStyle,
+	defineStyleConfig,
+	Button
+} from '@chakra-ui/react'
+import { listWidth } from '../constants'
+import { AddIcon, MinusIcon, SmallAddIcon } from '@chakra-ui/icons'
+import { ChangeEvent, useContext, useState } from 'react';
+import { RoundContext } from "../RoundProvider";
 
-export function TurnCard(turn: Turn) {
-	var bgColor = "#E7D0F0";
 
-	if (turn.hp !== null) { bgColor = "#F0D0D0" }
+export function TurnCard({ turnIdx }: { turnIdx: number }) {
+	const { round, changeRound } = useContext(RoundContext)
+	const [edit, setEdit] = useState(false);
+	const [localRound, setLocalRound] = useState(round); // Local state to update immediately
+
+	const turn = localRound.turns[turnIdx];
+	var bgColor = (turn.hp === null ? "#E7D0F0" : "#F0D0D0");
+
+	// Event handlers
+	const onBlur = () => {
+		setEdit(false);
+	}
+	const onFocus = () => {
+		setEdit(true);
+	}
+	const onChangeInitiative = (e: ChangeEvent<HTMLInputElement>) => {
+		const newRound = { ...localRound };
+		newRound.turns[turnIdx].initiative = +e.target.value;
+		setLocalRound(newRound);
+		changeRound(newRound);
+	};
+	const onChangeName = (e: ChangeEvent<HTMLInputElement>) => {
+		const newRound = { ...localRound };
+		newRound.turns[turnIdx].name = e.target.value;
+		setLocalRound(newRound);
+		changeRound(newRound);
+	}
+
 	return (
 		<Box
 			width="100%"
 			maxWidth={listWidth}
-			marginTop="0.5rem">
+			marginY="0.5rem"
+			onFocus={onFocus}
+			onBlur={onBlur}>
 			<Card
 				bgColor={bgColor}
 				border="solid 1px black"
@@ -21,17 +61,33 @@ export function TurnCard(turn: Turn) {
 					display="flex"
 					alignItems={"center"}
 					fontSize={'lg'}
-					fontWeight="semibold"
-				>
-					<Text
-						minWidth="1.2em"
-						marginEnd={"0.5em"}
-						textAlign={"end"}>
-						{turn.initiative}
-					</Text>
-					<Text>
-						{' ' + turn.name}
-					</Text>
+					fontWeight="semibold">
+					<Input
+						key="asdf"
+						type='number'
+						value={turn.initiative}
+						// readOnly={!edit}
+						onChange={onChangeInitiative}
+						fontSize={'lg'}
+						fontWeight="semibold"
+						textAlign={"end"}
+						maxWidth="2em"
+						paddingStart={"0"}
+						paddingX="0.25em"
+						border="none"
+						variant={'unstyled'}
+					/>
+					<Input
+						value={turn.name}
+						// readOnly={!edit}
+						onChange={onChangeName}
+						fontSize={'lg'}
+						fontWeight="semibold"
+						paddingStart="0.25em"
+						marginEnd="0.25em"
+						border="none"
+						variant={'unstyled'}
+					/>
 					{turn.hp !== null &&
 						<Container
 							flexGrow={1}
@@ -67,8 +123,7 @@ export function TurnCard(turn: Turn) {
 								borderRadius="8px"
 								boxShadow={"2px 2px 0 black"}
 								type='number'
-								paddingX="0.5em"
-								fontWeight={'semibold'} />
+								paddingX="0.5em" />
 						</Container>
 					}
 				</CardBody>
@@ -79,6 +134,18 @@ export function TurnCard(turn: Turn) {
 				flexWrap={"wrap"}
 				gap={"0.3rem"}>
 				{turn.conditions.map((condition, idx) => (
+					// <Input
+					// 	variant='outline'
+					// 	color={"blacks"}
+					// 	paddingY="0.1rem"
+					// 	paddingX="0.4rem"
+					// 	border="solid 1px black"
+					// 	borderRadius="10px"
+					// 	bgColor="#feda79"
+					// 	fontWeight={'semibold'}
+					// 	key={idx}
+					// 	value={condition.name + ' ' + condition.roundCounter}>
+					// </Input>
 					<Text
 						variant='outline'
 						color={"blacks"}
@@ -92,6 +159,27 @@ export function TurnCard(turn: Turn) {
 						{condition.name} {condition.roundCounter}
 					</Text>
 				))}
+				{turn.conditions.length > 0 &&
+					<Button
+						bgColor="#feda79"
+						border="solid 1px black"
+						borderRadius="50%"
+						alignSelf={"center"}
+						margin="0"
+						padding="0"
+						size="xs"
+						boxShadow={"2px 2px 0 black"}
+					>
+						<SmallAddIcon
+							fontSize={"1.5em"}
+							// height="1rem"
+							// width="0.6em"
+							margin="0"
+							padding="0"
+						/>
+					</Button>
+				}
+
 			</Flex>
 		</Box>
 	)
