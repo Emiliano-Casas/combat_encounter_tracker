@@ -7,7 +7,6 @@ import { RoundContext } from "../RoundProvider";
 import { useContext } from "react";
 
 export function Footer() {
-	// const { round, changeRound } = useContext(RoundContext);
 	const { round, changeRound } = useContext(RoundContext);
 
 	function addRound() {

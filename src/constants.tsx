@@ -37,7 +37,7 @@ export type Turn = {
 	initMod?: number
 }
 
-type Condition = {
+export type Condition = {
 	name: string,
 	roundCounter?: number
 }

@@ -9,14 +9,9 @@ export function TurnList() {
 
 	// useEffect(() => {
 	// 	// Scroll to the last TurnCard when the component mounts or when round.turns changes
-	// 	if (stackRef.current) {
-	// 		const stackElement = stackRef.current;
-	// 		stackElement.scrollTo({
-	// 			top: stackElement.scrollHeight,
-	// 			behavior: "smooth",
-	// 		});
-	// 	}
-	// }, [round.turns]);
+	// 	console.log(stackRef.current);
+	// }, [round.turns]
+	// );
 
 	const displayTurns = round.turns.map((turn, idx) => {
 		return <TurnCard key={"turn_" + idx} turnIdx={idx}></TurnCard>;
@@ -27,7 +22,7 @@ export function TurnList() {
 			display="flex"
 			flexDir={"column"}
 			alignItems="center"
-			ref={stackRef}
+			// ref={stackRef}
 			width="100%"
 			height="100%"
 			overflowY="auto"
