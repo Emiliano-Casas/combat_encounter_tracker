@@ -1,17 +1,10 @@
-import { Box, Spacer } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { TurnCard } from "./TurnCard";
-import { useContext, useRef, useEffect } from "react";
+import { useContext } from "react";
 import { RoundContext } from "../RoundProvider";
 
 export function TurnList() {
-	const stackRef = useRef<HTMLDivElement>(null);
 	const { round } = useContext(RoundContext);
-
-	// useEffect(() => {
-	// 	// Scroll to the last TurnCard when the component mounts or when round.turns changes
-	// 	console.log(stackRef.current);
-	// }, [round.turns]
-	// );
 
 	const displayTurns = round.turns.map((turn, idx) => {
 		return <TurnCard key={"turn_" + idx} turnIdx={idx}></TurnCard>;
@@ -22,7 +15,6 @@ export function TurnList() {
 			display="flex"
 			flexDir={"column"}
 			alignItems="center"
-			// ref={stackRef}
 			width="100%"
 			height="100%"
 			overflowY="auto"

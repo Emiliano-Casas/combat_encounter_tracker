@@ -39,7 +39,8 @@ export type Turn = {
 
 export type Condition = {
 	name: string,
-	roundCounter?: number
+	roundCounter?: number,
+	checked?: boolean 
 }
 
 export const listWidth = "540px"

@@ -8,28 +8,45 @@ import {
 	Container,
 	Button,
 	InputGroup,
-	InputRightElement
-} from '@chakra-ui/react'
-import { listWidth, Condition } from '../constants'
-import { AddIcon, MinusIcon, SmallAddIcon, TimeIcon } from '@chakra-ui/icons'
-import { ChangeEvent, useContext, useEffect, useRef, useState, KeyboardEventHandler, FocusEventHandler } from 'react';
+	InputRightElement,
+	Checkbox
+} from '@chakra-ui/react';
+import {
+	ChangeEvent,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+	KeyboardEventHandler,
+	FocusEventHandler,
+	MouseEvent
+} from 'react';
+import { listWidth, Condition, Round } from '../constants'
+import { AddIcon, MinusIcon, SmallAddIcon, DeleteIcon, TimeIcon } from '@chakra-ui/icons'
 import { RoundContext } from "../RoundProvider";
 
 export function TurnCard({ turnIdx }: { turnIdx: number }) {
-	const { round, changeRound } = useContext(RoundContext)
-	const [addCond, setAddCond] = useState(false);
-	const [localRound, setLocalRound] = useState(round); // Local state to update immediately
+	const { round, setContextRound } = useContext(RoundContext);
+	const modes = ["default", "add condition", "delete condition"];
+	const [mode, setMode] = useState(modes[0]);
+	// Local Round state to re-render immediately upon change
+	const [localRound, setLocalRound] = useState(round);
 	const condNameInput = useRef<HTMLInputElement>(null);
 	const condCounterInput = useRef<HTMLInputElement>(null);
 
 	const turn = localRound.turns[turnIdx];
-	var bgColor = (turn.hp === null ? "#E7D0F0" : "#F0D0D0");
+	var barColor = (turn.hp === null ? "#E7D0F0" : "#F0D0D0");
 
 	useEffect(() => {
 		if (condNameInput.current) {
 			condNameInput.current.focus();
 		};
-	}, [addCond]);
+	}, [mode]);
+
+	const updateRound = (newRound: Round) => {
+		setLocalRound(newRound);
+		setContextRound(newRound);
+	}
 
 	const addCondition = () => {
 		if (condNameInput.current && condNameInput.current.value.trim() !== '') {
@@ -40,7 +57,7 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 			const newRound = { ...localRound };
 			newRound.turns[turnIdx].conditions.push(newCond);
 			setLocalRound(newRound);
-			changeRound(newRound);
+			setContextRound(newRound);
 		}
 	}
 
@@ -49,27 +66,116 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 		if (e.key === 'Enter') {
 			e.preventDefault();
 			addCondition()
-			setAddCond(false);
+			setMode(modes[0]);
 		}
 	};
-	const onBlurCondition: FocusEventHandler<HTMLInputElement> = (e) => {
+	const onBlurConditionInput: FocusEventHandler<HTMLInputElement> = (e) => {
 		if (e.relatedTarget !== condCounterInput.current && e.relatedTarget !== condNameInput.current) {
-			// Clicked outside condition name and counter inputs
 			addCondition()
-			setAddCond(false);
+			setMode(modes[0]);
 		}
+	};
+	const onBlurCondition: FocusEventHandler = (e) => {
+		
+	}
+	const onClickCondition = (e: MouseEvent<HTMLButtonElement>, conditionIndex: number) => {
+		e.preventDefault();
+		const newRound = { ...localRound };
+		newRound.turns[turnIdx].conditions[conditionIndex].checked = !newRound.turns[turnIdx].conditions[conditionIndex].checked;
+		setContextRound(newRound);
+		setMode(modes[2]);
 	};
 	const onChangeInitiative = (e: ChangeEvent<HTMLInputElement>) => {
 		const newRound = { ...localRound };
 		newRound.turns[turnIdx].initiative = +e.target.value;
-		setLocalRound(newRound);
-		changeRound(newRound);
+		updateRound(newRound);
 	};
 	const onChangeName = (e: ChangeEvent<HTMLInputElement>) => {
 		const newRound = { ...localRound };
 		newRound.turns[turnIdx].name = e.target.value;
-		setLocalRound(newRound);
-		changeRound(newRound);
+	}
+
+	// Rendering
+	const conditionInputs = () => {
+		switch (mode) {
+			case modes[0]:
+				return (
+					<Button
+						bgColor="#feda79"
+						border="solid 1px black"
+						borderRadius="50%"
+						alignSelf={"center"}
+						margin="0"
+						padding="0"
+						size="xs"
+						boxShadow={"2px 2px 0 black"}
+						onClick={() => { setMode(modes[1]) }}
+					>
+						<SmallAddIcon
+							fontSize={"1.5em"}
+							margin="0"
+							padding="0"
+						/>
+					</Button>
+				)
+			case modes[1]:
+				return (
+					<InputGroup
+						variant='unstyled'
+						border="solid 1px black"
+						borderRadius="10px"
+						bgColor="#feda79"
+						onKeyDown={onKeyDownCondition}
+						onBlur={onBlurConditionInput}
+						maxWidth="11em"
+						paddingY="0"
+						marginY="0"
+					>
+						<Input
+							ref={condNameInput}
+							paddingX="0.4rem"
+							fontWeight={'semibold'}
+							type={'text'}
+							placeholder="Condition..."
+						/>
+						<InputRightElement
+							width='5rem'
+							height="100%">
+							<Input
+								ref={condCounterInput}
+								textAlign={"center"}
+								variant='unstyled'
+								borderStart="solid 1px black"
+								borderRadius="none"
+								type='number'
+								fontWeight={'semibold'}
+								paddingX="0.1rem"
+								placeholder="Rounds..."
+							/>
+						</InputRightElement>
+					</InputGroup>
+				)
+			case modes[2]:
+				return (
+					<Button
+						bgColor="#feda79"
+						border="solid 1px black"
+						borderRadius="50%"
+						alignSelf={"center"}
+						margin="0"
+						padding="0"
+						size="xs"
+						boxShadow={"2px 2px 0 black"}
+						onClick={() => { setMode(modes[1]) }}
+					>
+						<DeleteIcon
+							fontSize={"1.5em"}
+							margin="0"
+							padding="0"
+						/>
+					</Button>
+				)
+		}
 	}
 
 	return (
@@ -78,7 +184,7 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 			maxWidth={listWidth}
 			marginY="0.5rem">
 			<Card
-				bgColor={bgColor}
+				bgColor={barColor}
 				border="solid 1px black"
 				borderRadius="10px"
 				boxShadow={"2px 2px 0 black"}
@@ -149,10 +255,7 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 								boxShadow={"2px 2px 0 black"}
 								type='number'
 								paddingX="0.5em"
-								// _active={{
-								// 	border: "solid 2px black"
-								// }}
-								 />
+							/>
 						</Container>
 					}
 				</CardBody>
@@ -164,7 +267,9 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 					flexWrap={"wrap"}
 					gap={"0.3rem"}>
 					{turn.conditions.map((condition, idx) => (
-						<Flex
+						<Button
+							key={idx}
+							height="1.8em"
 							width="auto"
 							margin="0"
 							color={"blacks"}
@@ -173,8 +278,16 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 							borderRadius="10px"
 							bgColor="#feda79"
 							fontWeight={'semibold'}
-							key={idx}
-							alignItems={"center"}>
+							alignItems={"center"}
+							onClick={(e) => onClickCondition(e, idx)}
+							onBlur={onBlurCondition}
+						>
+							{mode == "delete condition" &&
+								<Checkbox
+									id={`checkbox-${turnIdx}-${idx}`}
+									mr="0.2em"
+									isChecked={condition.checked}></Checkbox>
+							}
 							<Text>
 								{condition.name}
 							</Text>
@@ -188,64 +301,9 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 									</Text>
 								</>
 							}
-						</Flex>
-					))}
-					{addCond ?
-						<InputGroup
-							variant='unstyled'
-							border="solid 2px black"
-							borderRadius="10px"
-							bgColor="#feda79"
-							onKeyDown={onKeyDownCondition}
-							onBlur={onBlurCondition}
-							maxWidth="11em"
-							paddingY="0"
-							marginY="0"
-						>
-							<Input
-								ref={condNameInput}
-								paddingX="0.4rem"
-								fontWeight={'semibold'}
-								type={'text'}
-								placeholder="Condition..."
-							// textAlign={"center"}
-							/>
-							<InputRightElement
-								width='5rem'
-								height="100%">
-								<Input
-									ref={condCounterInput}
-									textAlign={"center"}
-									variant='unstyled'
-									borderStart="solid 1px black"
-									borderRadius="none"
-									type='number'
-									fontWeight={'semibold'}
-									paddingX="0.1rem"
-									placeholder="Rounds..."
-								></Input>
-							</InputRightElement>
-						</InputGroup>
-						:
-						<Button
-							id="conditionButton"
-							bgColor="#feda79"
-							border="solid 1px black"
-							borderRadius="50%"
-							alignSelf={"center"}
-							margin="0"
-							padding="0"
-							size="xs"
-							boxShadow={"2px 2px 0 black"}
-							onClick={() => { setAddCond(true) }}
-						>
-							<SmallAddIcon
-								fontSize={"1.5em"}
-								margin="0"
-								padding="0"
-							/>
 						</Button>
-					}
+					))}
+					{conditionInputs()}
 				</Flex>
 			}
 		</Box>
