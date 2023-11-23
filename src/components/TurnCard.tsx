@@ -56,8 +56,7 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 			}
 			const newRound = { ...localRound };
 			newRound.turns[turnIdx].conditions.push(newCond);
-			setLocalRound(newRound);
-			setContextRound(newRound);
+			updateRound(newRound);
 		}
 	}
 
@@ -76,7 +75,20 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 		}
 	};
 	const onBlurCondition: FocusEventHandler = (e) => {
-		
+		if (
+			e.relatedTarget === null || (
+				!e.relatedTarget.classList.contains(`turn-${turnIdx}_condition`) &&
+				!e.relatedTarget.classList.contains(`turn-${turnIdx}_condition_delete`)
+			)) {
+			setMode(modes[0]);
+			const newRound = { ...localRound };
+			const newConditions = newRound.turns[turnIdx].conditions;
+			newRound.turns[turnIdx].conditions = newConditions.map((condition) => {
+				condition.checked = false;
+				return (condition);
+			});
+			updateRound(newRound);
+		}
 	}
 	const onClickCondition = (e: MouseEvent<HTMLButtonElement>, conditionIndex: number) => {
 		e.preventDefault();
@@ -85,6 +97,16 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 		setContextRound(newRound);
 		setMode(modes[2]);
 	};
+	const onClickDeleteCondition = (e: MouseEvent<HTMLButtonElement>) => {
+		const newRound = { ...localRound };
+		const newConditions: Condition[] = new Array;
+		newRound.turns[turnIdx].conditions.forEach((ele: Condition) => {
+			if(!ele.checked) { newConditions.push(ele); }
+		})
+		newRound.turns[turnIdx].conditions = newConditions;
+		updateRound(newRound);
+		setMode(modes[0]);
+	}
 	const onChangeInitiative = (e: ChangeEvent<HTMLInputElement>) => {
 		const newRound = { ...localRound };
 		newRound.turns[turnIdx].initiative = +e.target.value;
@@ -158,7 +180,8 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 			case modes[2]:
 				return (
 					<Button
-						bgColor="#feda79"
+						className={`turn-${turnIdx}_condition_delete`}
+						bgColor="#F0D0D0"
 						border="solid 1px black"
 						borderRadius="50%"
 						alignSelf={"center"}
@@ -166,12 +189,14 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 						padding="0"
 						size="xs"
 						boxShadow={"2px 2px 0 black"}
-						onClick={() => { setMode(modes[1]) }}
+						height="1.8rem"
+						width="1.8rem"
+						onClick={onClickDeleteCondition}
 					>
 						<DeleteIcon
-							fontSize={"1.5em"}
+							color="#9C3030"
+							fontSize={"1.4em"}
 							margin="0"
-							padding="0"
 						/>
 					</Button>
 				)
@@ -182,7 +207,8 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 		<Box
 			width="100%"
 			maxWidth={listWidth}
-			marginY="0.5rem">
+			marginY="0.5rem"
+			>
 			<Card
 				bgColor={barColor}
 				border="solid 1px black"
@@ -190,7 +216,8 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 				boxShadow={"2px 2px 0 black"}
 				cursor="pointer">
 				<CardBody
-					padding="0.5rem"
+					paddingY={turn.hp === null ? "0.5rem" : "0"}
+					paddingX="0.5rem"
 					display="flex"
 					alignItems={"center"}
 					fontSize={'lg'}
@@ -229,7 +256,8 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 							margin="0"
 							width="auto">
 							<Text
-								fontSize={'2xl'}
+								fontSize={'3xl'}
+								// fontSize={'2xl'}
 								fontWeight={'semibold'}
 								textColor="#9C3030">
 								{turn.hp}
@@ -269,6 +297,7 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 					{turn.conditions.map((condition, idx) => (
 						<Button
 							key={idx}
+							className={`turn-${turnIdx}_condition`}
 							height="1.8em"
 							width="auto"
 							margin="0"
@@ -286,6 +315,8 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 								<Checkbox
 									id={`checkbox-${turnIdx}-${idx}`}
 									mr="0.2em"
+									borderColor={"black"}
+									color="black"
 									isChecked={condition.checked}></Checkbox>
 							}
 							<Text>
