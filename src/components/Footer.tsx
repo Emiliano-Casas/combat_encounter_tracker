@@ -7,18 +7,17 @@ import { RoundContext } from "../RoundProvider";
 import { useContext } from "react";
 
 export function Footer() {
-	const { round, changeRound } = useContext(RoundContext);
+	const { round, setContextRound } = useContext(RoundContext);
 
 	function addRound() {
-		console.log("addRound");
 		const newRound = { ...round };
 		round.turns.push({
-			initiative: 7, name: "NEW", hp: null, conditions: [
+			initiative: 7, name: "NEW", maxHP: 12, hp: 12, conditions: [
 				{ name: "condition_1", roundCounter: 3 },
 				{ name: "condition_2", roundCounter: 2 },
 				{ name: "condition_3" }]
 		});
-		changeRound(newRound);
+		setContextRound(newRound);
 	}
 
 	return (

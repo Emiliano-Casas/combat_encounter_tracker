@@ -9,7 +9,9 @@ import {
 	Button,
 	InputGroup,
 	InputRightElement,
-	Checkbox
+	Checkbox,
+	Collapse,
+	useDisclosure
 } from '@chakra-ui/react';
 import {
 	ChangeEvent,
@@ -22,7 +24,7 @@ import {
 	MouseEvent
 } from 'react';
 import { listWidth, Condition, Round } from '../constants'
-import { AddIcon, MinusIcon, SmallAddIcon, DeleteIcon, TimeIcon } from '@chakra-ui/icons'
+import { EditIcon, AddIcon, MinusIcon, SmallAddIcon, DeleteIcon, TimeIcon } from '@chakra-ui/icons'
 import { RoundContext } from "../RoundProvider";
 
 export function TurnCard({ turnIdx }: { turnIdx: number }) {
@@ -31,11 +33,14 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 	const [mode, setMode] = useState(modes[0]);
 	// Local Round state to re-render immediately upon change
 	const [localRound, setLocalRound] = useState(round);
+	const [addingHP, setAddingHP] = useState(false);
+	const { isOpen, onClose, onOpen } = useDisclosure()
+
 	const condNameInput = useRef<HTMLInputElement>(null);
 	const condCounterInput = useRef<HTMLInputElement>(null);
 
 	const turn = localRound.turns[turnIdx];
-	var barColor = (turn.hp === null ? "#E7D0F0" : "#F0D0D0");
+	var barColor = (turn.hasOwnProperty("maxHP") ? "#F0D0D0" : "#E7D0F0");
 
 	useEffect(() => {
 		if (condNameInput.current) {
@@ -61,6 +66,25 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 	}
 
 	// Event handlers
+	const onEnterHP: KeyboardEventHandler<HTMLInputElement> = (e) => {
+		let diff = +e.currentTarget.value;
+		const hp = localRound.turns[turnIdx].hp;
+		if (e.key === 'Enter' && diff !== 0 && hp !== undefined) {
+			if (!addingHP) {
+				diff = diff * -1;
+			}
+			if (hp + diff >= 0) {
+				updateHP(hp + diff);
+			} else {
+				updateHP(0);
+			}
+		}
+	};
+	const updateHP = (newHP: number) => {
+		const newRound = { ...localRound };
+		newRound.turns[turnIdx].hp = newHP;
+		updateRound(newRound);
+	}
 	const onKeyDownCondition: KeyboardEventHandler<HTMLInputElement> = (e) => {
 		if (e.key === 'Enter') {
 			e.preventDefault();
@@ -94,14 +118,14 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 		e.preventDefault();
 		const newRound = { ...localRound };
 		newRound.turns[turnIdx].conditions[conditionIndex].checked = !newRound.turns[turnIdx].conditions[conditionIndex].checked;
-		setContextRound(newRound);
+		updateRound(newRound);
 		setMode(modes[2]);
 	};
 	const onClickDeleteCondition = (e: MouseEvent<HTMLButtonElement>) => {
 		const newRound = { ...localRound };
 		const newConditions: Condition[] = new Array;
 		newRound.turns[turnIdx].conditions.forEach((ele: Condition) => {
-			if(!ele.checked) { newConditions.push(ele); }
+			if (!ele.checked) { newConditions.push(ele); }
 		})
 		newRound.turns[turnIdx].conditions = newConditions;
 		updateRound(newRound);
@@ -113,8 +137,15 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 		updateRound(newRound);
 	};
 	const onChangeName = (e: ChangeEvent<HTMLInputElement>) => {
+		updateName(e.currentTarget.value)
+	};
+	const onClickEditButton = (e: MouseEvent<HTMLButtonElement>) => {
+		onClose();
+	}
+	const updateName = (newName: string) => {
 		const newRound = { ...localRound };
-		newRound.turns[turnIdx].name = e.target.value;
+		newRound.turns[turnIdx].name = newName;
+		updateRound(newRound);
 	}
 
 	// Rendering
@@ -208,22 +239,52 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 			width="100%"
 			maxWidth={listWidth}
 			marginY="0.5rem"
-			>
+		>
+			<Collapse in={isOpen} animateOpacity>
+				<Box
+					textAlign={"right"}>
+					<Button
+						bgColor={"white"}
+						borderBottom="1px"
+						borderBottomRadius={"0"}
+						marginRight="0.5rem"
+						onClick={onClickEditButton}>
+						<SmallAddIcon
+							fontSize={"1.5em"}
+							margin="0"
+							padding="0"
+						/>
+						<Text
+							ml="0.1em">Condition</Text>
+					</Button>
+					<Button
+						bgColor={"white"}
+						borderBottom="1px"
+						borderBottomRadius={"0"}
+						marginRight="0.5rem"
+						onClick={onClickEditButton}>
+						<EditIcon></EditIcon>
+						<Text
+							ml="0.1em">Edit</Text>
+					</Button>
+				</Box>
+			</Collapse>
 			<Card
 				bgColor={barColor}
-				border="solid 1px black"
 				borderRadius="10px"
 				boxShadow={"2px 2px 0 black"}
-				cursor="pointer">
+				cursor="pointer"
+				onFocus={onOpen}
+				onBlur={onClose}
+			>
 				<CardBody
-					paddingY={turn.hp === null ? "0.5rem" : "0"}
+					paddingY={turn.hasOwnProperty("maxHP") ? "0" : "0.5rem"}
 					paddingX="0.5rem"
 					display="flex"
 					alignItems={"center"}
 					fontSize={'lg'}
 					fontWeight="semibold">
 					<Input
-						key="asdf"
 						type='number'
 						value={turn.initiative}
 						onChange={onChangeInitiative}
@@ -239,6 +300,7 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 					<Input
 						value={turn.name}
 						onChange={onChangeName}
+						placeholder='Name'
 						fontSize={'lg'}
 						fontWeight="semibold"
 						paddingStart="0.25em"
@@ -246,18 +308,17 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 						border="none"
 						variant={'unstyled'}
 					/>
-					{turn.hp !== null &&
+					{turn.hasOwnProperty("maxHP") &&
 						<Container
-							flexGrow={1}
 							display={"flex"}
 							justifyContent={"end"}
 							alignItems={"center"}
 							paddingX="0"
 							margin="0"
-							width="auto">
+							width="auto"
+							onFocus={onOpen}>
 							<Text
 								fontSize={'3xl'}
-								// fontSize={'2xl'}
 								fontWeight={'semibold'}
 								textColor="#9C3030">
 								{turn.hp}
@@ -266,29 +327,52 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 								flexDir="column"
 								paddingStart={"0.5rem"}
 								paddingEnd={"0.3rem"}
-								justifyContent={"center"}
+								justifyContent={"space-around"}
+								alignItems={"center"}
 								fontSize={"0.6em"}
 								textColor="#9C3030"
 								textOverflow={"ellipsis"}>
-								<AddIcon></AddIcon>
-								<MinusIcon></MinusIcon>
+								<Button
+									padding="0"
+									fontSize="1em"
+									height="1rem"
+									variant="ghost"
+									bgColor={addingHP ? "#E7B1B1" : "none"}
+									width="2em"
+									onClick={() => setAddingHP(true)}>
+									<AddIcon></AddIcon>
+								</Button>
+								<Button
+									padding="0"
+									fontSize="1em"
+									height="1rem"
+									variant="ghost"
+									bgColor={addingHP ? "none" : "#E7B1B1"}
+									width="2em"
+									onClick={() => setAddingHP(false)}>
+									<MinusIcon></MinusIcon>
+								</Button>
 							</Flex>
 							<Input
 								fontWeight={'semibold'}
 								size="sm"
 								width={"3.5em"}
 								bgColor={"#E7B1B1"}
-								border="solid 1px black"
+								// border="solid 1px black"
+								border="none"
 								borderRadius="8px"
 								boxShadow={"2px 2px 0 black"}
 								type='number'
 								paddingX="0.5em"
+								onKeyDown={onEnterHP}
+								placeholder='ΔHP'
 							/>
 						</Container>
 					}
 				</CardBody>
 			</Card>
-			{turn.conditions.length > 0 &&
+			{
+				turn.conditions.length > 0 &&
 				<Flex
 					marginTop="0.38rem"
 					justifyContent="center"
@@ -337,6 +421,6 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 					{conditionInputs()}
 				</Flex>
 			}
-		</Box>
+		</Box >
 	)
 }

@@ -1,11 +1,11 @@
 import { Button, Box, Heading } from "@chakra-ui/react";
 import { listWidth } from "../constants";
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
-import { Context } from '../context';
 import { useContext } from "react";
+import { RoundContext } from "../RoundProvider";
 
 export function Nav() {
-	const { roundNum } = useContext(Context);
+	const { round} = useContext(RoundContext);
 	return (
 		<Box
 			bg="#cce5e5"
@@ -28,7 +28,7 @@ export function Nav() {
 						boxSize={5} />
 				</Button>
 				<Heading>
-					Round {roundNum}
+					Round {round.roundNum}
 				</Heading>
 				<Button
 					border="solid 1px black"
