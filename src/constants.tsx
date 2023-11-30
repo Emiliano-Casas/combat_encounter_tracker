@@ -57,7 +57,7 @@ export const savedRound1: Round = {
 				{ name: "condition_3" }]
 		},
 		{
-			initiative: 33, name: "Volothamp Geddharm", maxHP: 14, hp:14, conditions: [
+			initiative: 33, name: "Volothamp Geddharm", maxHP: 999, hp:999, conditions: [
 				{ name: "Volothamp Geddharm", roundCounter: 3 },
 				{ name: "condition_2", roundCounter: 2 },
 				{ name: "condition_3" },
