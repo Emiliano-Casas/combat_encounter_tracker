@@ -4,20 +4,21 @@ import { AddIcon, DeleteIcon } from '@chakra-ui/icons'
 import { Icon } from '@chakra-ui/react'
 import { FaSave, FaDownload } from 'react-icons/fa'
 import { RoundContext } from "../RoundProvider";
-import { useContext } from "react";
+import { useContext, Dispatch, SetStateAction } from "react";
 
-export function Footer() {
+export function Footer({ setAddedNewTurn }:
+	{
+		setAddedNewTurn: Dispatch<SetStateAction<boolean>>
+	}) {
 	const { round, setContextRound } = useContext(RoundContext);
 
 	function addRound() {
 		const newRound = { ...round };
 		round.turns.push({
-			initiative: 7, name: "NEW", maxHP: 12, hp: 12, conditions: [
-				{ name: "condition_1", roundCounter: 3 },
-				{ name: "condition_2", roundCounter: 2 },
-				{ name: "condition_3" }]
+			initiative: 0, name: "", maxHP: 0, hp: 0, conditions: []
 		});
 		setContextRound(newRound);
+		setAddedNewTurn(true);
 	}
 
 	return (

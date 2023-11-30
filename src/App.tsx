@@ -4,8 +4,11 @@ import { Box } from '@chakra-ui/react';
 import { TurnList } from './components/TurnList';
 import { Footer } from './components/Footer';
 import { RoundProvider } from './RoundProvider';
+import { useState } from 'react';
 
 function App() {
+	const [addedNewTurn, setAddedNewTurn] = useState(false);
+
 	return (
 		<RoundProvider>
 			<Box
@@ -15,8 +18,8 @@ function App() {
 				flexDir={"column"}
 				padding="0">
 				<Nav />
-				<TurnList />
-				<Footer />
+				<TurnList addedNewTurn={addedNewTurn} />
+				<Footer setAddedNewTurn={setAddedNewTurn} />
 			</Box>
 		</RoundProvider>
 	)

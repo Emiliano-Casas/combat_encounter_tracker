@@ -6,9 +6,9 @@ type ContextType = {
 	round: Round,
 	setContextRound: (round: Round) => void
 }
-const emptyRound: Round = { roundNum: 0, turns: [] }
+
 export const RoundContext = createContext<ContextType>({
-	round: emptyRound,
+	round: { roundNum: 0, turns: [] },
 	setContextRound: () => { }
 });
 

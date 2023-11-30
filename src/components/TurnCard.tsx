@@ -18,7 +18,7 @@ import {
 	FocusEventHandler,
 	MouseEvent
 } from 'react';
-import { listWidth, Round } from '../constants'
+import { listWidth, palette, Round } from '../constants'
 import {
 	EditIcon,
 	AddIcon,
@@ -29,11 +29,15 @@ import { RoundContext } from "../RoundProvider";
 import { FaSave, FaDownload } from 'react-icons/fa'
 import { ConditionsList } from './ConditionsList'
 
-export function TurnCard({ turnIdx }: { turnIdx: number }) {
+export function TurnCard({ turnIdx, initEditMode }: {
+	turnIdx: number,
+	initEditMode: boolean
+}) {
 	const { round, setContextRound } = useContext(RoundContext);
 
 	const [localRound, setLocalRound] = useState(round);
 	const [addingHP, setAddingHP] = useState(false);
+	const [editMode, setEditMode] = useState(initEditMode);
 	const editButtons = useDisclosure();
 
 	const turn = localRound.turns[turnIdx];
@@ -83,14 +87,15 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 		updateName(e.currentTarget.value)
 	};
 	const onClickEditButton = (e: MouseEvent<HTMLButtonElement>) => {
-		editButtons.onClose();
+		// editButtons.onClose();
+		setEditMode(true);
 	}
 	const onBlurCardBody: FocusEventHandler = (e) => {
 		if (!e.currentTarget.contains(e.relatedTarget)) {
 			editButtons.onClose();
+			setEditMode(false);
 		}
 	}
-
 
 	return (
 		<Box
@@ -98,101 +103,106 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 			maxWidth={listWidth}
 			marginY="0.5rem"
 		>
-			<Collapse in={editButtons.isOpen} animateOpacity>
-				<Box
-					textAlign={"right"}>
-					<Button
-						bgColor={"white"}
-						borderBottom="1px"
-						borderBottomRadius={"0"}
-						marginRight="0.5rem"
-						onClick={onClickEditButton}>
-						<FaDownload
-							// fontSize={"1.5em"}
-							margin="0"
-							padding="0"
-						/>
-						<Text
-							ml="0.3em">Save</Text>
-					</Button>
-					<Button
-						bgColor={"white"}
-						borderBottom="1px"
-						borderBottomRadius={"0"}
-						marginRight="0.5rem"
-						onClick={onClickEditButton}>
-						<FaSave
-							margin="0"
-							padding="0"
-						/>
-						<Text
-							ml="0.3em">Load</Text>
-					</Button>
-					<Button
-						bgColor={"white"}
-						borderBottom="1px"
-						borderBottomRadius={"0"}
-						marginRight="0.5rem"
-						onClick={onClickEditButton}>
-						<SmallAddIcon
-							fontSize={"1.5em"}
-							margin="0"
-							padding="0"
-						/>
-						<Text>Condition</Text>
-					</Button>
-					<Button
-						bgColor={"white"}
-						borderBottom="1px"
-						borderBottomRadius={"0"}
-						marginRight="0.5rem"
-						onClick={onClickEditButton}>
-						<EditIcon></EditIcon>
-						<Text
-							ml="0.3em">Edit</Text>
-					</Button>
-				</Box>
-			</Collapse>
 			<Card
-				bgColor={barColor}
-				borderRadius="10px"
-				boxShadow={"2px 2px 0 black"}
-				cursor="pointer"
+				boxShadow={"none"}
 				onClick={editButtons.onOpen}
 				onBlur={onBlurCardBody}
 			>
+				<Collapse in={editButtons.isOpen} animateOpacity>
+					<Box
+						textAlign={"right"}>
+						<Button
+							bgColor={"white"}
+							borderBottom="1px"
+							borderBottomRadius={"0"}
+							marginRight="0.5rem">
+							<FaDownload
+								margin="0"
+								padding="0"
+							/>
+							<Text
+								ml="0.3em">Save</Text>
+						</Button>
+						<Button
+							bgColor={"white"}
+							borderBottom="1px"
+							borderBottomRadius={"0"}
+							marginRight="0.5rem">
+							<FaSave
+								margin="0"
+								padding="0"
+							/>
+							<Text
+								ml="0.3em">Load</Text>
+						</Button>
+						<Button
+							bgColor={"white"}
+							borderBottom="1px"
+							borderBottomRadius={"0"}
+							marginRight="0.5rem">
+							<SmallAddIcon
+								fontSize={"1.5em"}
+								margin="0"
+								padding="0"
+							/>
+							<Text>Condition</Text>
+						</Button>
+						<Button
+							bgColor={"white"}
+							borderBottom="1px"
+							borderBottomRadius={"0"}
+							marginRight="0.5rem"
+							onClick={onClickEditButton}>
+							<EditIcon></EditIcon>
+							<Text
+								ml="0.3em">Edit</Text>
+						</Button>
+					</Box>
+				</Collapse>
 				<CardBody
-					// paddingY={turn.hasOwnProperty("maxHP") ? "0" : "0.5rem"}
-					paddingY="0"
-					paddingX="0.5rem"
+					bgColor={barColor}
+					borderRadius="10px"
+					boxShadow={"2px 2px 0 black"}
+					padding="0"
 					display="flex"
 					alignItems={"center"}
 					fontSize={'lg'}
-					fontWeight="semibold">
+					fontWeight="semibold"
+					paddingStart="0.5rem">
+					<label
+						hidden={!editMode}>
+						<Text color={palette.edit_gray}>Initiative:</Text>
+					</label>
 					<Input
+						id={`turn-${turnIdx}_initiative`}
 						type='number'
-						fontSize={'lg'}
+						fontSize='lg'
 						fontWeight="semibold"
-						textAlign={"end"}
-						maxWidth="2em"
+						textAlign={"center"}
+						maxWidth="1.5em"
 						paddingStart={"0"}
-						paddingX="0.25em"
+						marginX="0.25em"
 						border="none"
 						variant={'unstyled'}
+						borderRadius={"none"}
+						borderColor={"#4A5568"}
 						value={turn.initiative}
 						onChange={onChangeInitiative}
+						borderBottom={editMode ? '1px' : 'none'}
 					/>
 					<Input
 						placeholder='Name'
 						fontSize={'lg'}
 						fontWeight="semibold"
 						paddingStart="0.25em"
-						paddingY="0.5rem"
+						marginY="0.5rem"
 						marginEnd="0.25em"
 						border="none"
 						variant={'unstyled'}
+						borderRadius={"none"}
 						value={turn.name}
 						onChange={onChangeName}
+						borderBottom={editMode ? '1px' : 'none'}
 					/>
 					{turn.hasOwnProperty("maxHP") &&
 						<Container
@@ -202,27 +212,34 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 							paddingX="0"
 							margin="0"
 							width="auto">
+							<label
+								hidden={!editMode}>
+								<Text color={palette.edit_gray}>HP:</Text>
+							</label>
 							<Input
 								fontSize={'3xl'}
 								fontWeight={'semibold'}
 								textColor="#9C3030"
-								width="2em"
+								width="1.7em"
 								padding="0"
+								marginY="0.5rem"
+								marginX="0.25em"
 								textAlign={"right"}
 								variant={'unstyled'}
 								border="none"
+								borderRadius={"none"}
 								onKeyDown={onEnterHP}
 								value={turn.hp}
+								borderBottom={editMode ? '1px' : 'none'}
 							/>
 							<Flex
 								flexDir="column"
-								paddingStart={"0.5rem"}
-								paddingEnd={"0.3rem"}
 								justifyContent={"space-around"}
 								alignItems={"center"}
 								fontSize={"0.6em"}
 								textColor="#9C3030"
-								textOverflow={"ellipsis"}>
+								textOverflow={"ellipsis"}
+								hidden={editMode}>
 								<Button
 									padding="0"
 									fontSize="1em"
@@ -249,14 +266,15 @@ export function TurnCard({ turnIdx }: { turnIdx: number }) {
 								size="sm"
 								width={"3em"}
 								bgColor={"#E7B1B1"}
-								// border="solid 1px black"
 								border="none"
 								borderRadius="8px"
 								boxShadow={"2px 2px 0 black"}
 								type='number'
 								paddingX="0.5em"
-								onKeyDown={onEnterHPDiff}
+								marginX="0.5rem"
 								placeholder='ΔHP'
+								onKeyDown={onEnterHPDiff}
+								hidden={editMode}
 							/>
 						</Container>
 					}

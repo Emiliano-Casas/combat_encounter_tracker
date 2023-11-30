@@ -19,7 +19,8 @@ export const palette = {
 	dark_green: "#16302B",
 	timberwold: "#EADEDA",
 	cadet_gray: "#94999D",
-	dim_gray: "#69686e"
+	dim_gray: "#69686e",
+	edit_gray: "#4A5568",
 }
 
 export type Round = {

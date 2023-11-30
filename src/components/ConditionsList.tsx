@@ -120,7 +120,7 @@ export function ConditionsList({ turnIdx }: { turnIdx: number }) {
 						margin="0"
 						padding="0"
 						size="xs"
-						boxShadow={"2px 2px 0 black"}
+						boxShadow={"1px 1px 0 black"}
 						onClick={() => { setMode(ADD_CONDITION_MODE) }}
 					>
 						<SmallAddIcon
@@ -178,7 +178,7 @@ export function ConditionsList({ turnIdx }: { turnIdx: number }) {
 						margin="0"
 						padding="0"
 						size="xs"
-						boxShadow={"2px 2px 0 black"}
+						boxShadow={"1px 1px 0 black"}
 						height="1.8rem"
 						width="1.8rem"
 						onClick={onClickDeleteCondition}

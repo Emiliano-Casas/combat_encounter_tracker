@@ -1,13 +1,21 @@
 import { Box } from "@chakra-ui/react";
 import { TurnCard } from "./TurnCard";
-import { useContext } from "react";
+import { ReactElement, useContext } from "react";
 import { RoundContext } from "../RoundProvider";
 
-export function TurnList() {
+export function TurnList({ addedNewTurn }: { addedNewTurn: boolean }) {
 	const { round } = useContext(RoundContext);
 
-	const displayTurns = round.turns.map((turn, idx) => {
-		return <TurnCard key={"turn_" + idx} turnIdx={idx}></TurnCard>;
+	const displayTurns: ReactElement[] = []
+	round.turns.forEach((turn, idx, turns) => {
+		displayTurns.push(
+			<TurnCard
+				key={"turn_" + idx}
+				turnIdx={idx}
+				// initEditMode={addedNewTurn && idx == turns.length - 1}
+				initEditMode={true}
+			/>
+		)
 	});
 
 	return (
