@@ -21,6 +21,8 @@ export const palette = {
 	cadet_gray: "#94999D",
 	dim_gray: "#69686e",
 	edit_gray: "#4A5568",
+	health_red: "#F0D0D0",
+	light_purple: "#E7D0F0"
 }
 
 export type Round = {
