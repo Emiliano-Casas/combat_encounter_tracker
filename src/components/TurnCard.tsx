@@ -22,7 +22,8 @@ import {
 	useState,
 	KeyboardEventHandler,
 	FocusEventHandler,
-	MouseEvent
+	MouseEvent,
+	useRef
 } from 'react';
 import { listWidth, palette, Round } from '../constants'
 import {
@@ -45,6 +46,8 @@ export function TurnCard({ turnIdx, initEditMode }: {
 	const [addingHP, setAddingHP] = useState(false);
 	const [editMode, setEditMode] = useState(initEditMode);
 	const editButtons = useDisclosure();
+
+	const initInput = useRef<HTMLInputElement>(null);
 
 	const turn = localRound.turns[turnIdx];
 	const barColor = turn.hasOwnProperty("maxHP") ? palette.health_red : palette.light_purple;
@@ -102,6 +105,13 @@ export function TurnCard({ turnIdx, initEditMode }: {
 			setEditMode(false);
 		}
 	}
+	const onClickInitOverlay = (e: MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault()
+		editButtons.onOpen();
+		if (initInput.current !== null) {
+			initInput.current.focus();
+		}
+	}
 
 	return (
 		<Box
@@ -113,6 +123,7 @@ export function TurnCard({ turnIdx, initEditMode }: {
 				boxShadow={"none"}
 				onClick={editButtons.onOpen}
 				onBlur={onBlurCardBody}
+			// position="relative"
 			>
 				<Collapse in={editButtons.isOpen} animateOpacity>
 					<Box
@@ -184,45 +195,71 @@ export function TurnCard({ turnIdx, initEditMode }: {
 					boxShadow={"2px 2px 0 black"}
 					fontSize={'lg'}
 					fontWeight="semibold"
-					templateAreas={`"init_label init name hp_label  hp"
-													"mod_label  mod  name max_label max"`}
-					gridTemplateRows={'1fr 1fr'}
+					templateAreas={editMode ?
+						`"init_label init name hp_label  hp hp_diff"
+						"mod_label  mod  copies max_label max"`
+						:
+						`"init name hp hp_diff"`}
+					gridTemplateRows={editMode ? '1fr 1fr' : '1fr'}
+					gridTemplateColumns={editMode ? '1fr 2fr 4fr 1fr 2fr' : '1fr 5fr 2fr 2fr'}
 				>
-					<GridItem
-						area="init_label">
-						<label
-							hidden={!editMode}>
-							<Text
-								// ml="0.5em"
-								color={palette.edit_gray}>
-								Initiative:
-							</Text>
-						</label>
-					</GridItem>
+					{/* <Box
+						bgColor="black"
+						height="100%"
+						width="100%"
+						position="absolute"
+						opacity={0.5}
+						zIndex={1}
+						cursor="pointer">
+
+					</Box> */}
 					<GridItem area="init">
-						<Input
-							// maxWidth="1.5em"
-							// paddingStart={"0"}
-							// marginX="0.25em"
-							id={`turn-${turnIdx}_initiative`}
-							type='number'
-							fontSize='lg'
-							fontWeight="semibold"
-							textAlign={"center"}
-							border="none"
-							variant={'unstyled'}
-							borderRadius={"none"}
-							borderColor={"#4A5568"}
-							value={turn.initiative}
-							onChange={onChangeInitiative}
-							borderBottom={editMode ? `1px solid ${palette.edit_gray}` : 'none'}
-						/>
+						<Box
+							height="100%"
+							width="100%"
+							position="relative"
+						>
+							<Button
+								// bgColor="black"
+								// opacity="0.5"
+
+								zIndex={1}
+								position={"absolute"}
+								height="100%"
+								width="100%"
+								cursor="pointer"
+								variant={'unstyled'}
+								onClick={onClickInitOverlay}
+							/>
+							<Input
+								bgColor="lightgreen"
+								// maxWidth="1.5em"
+								// paddingStart={"0"}
+								// marginX="0.25em"
+								// paddingY="auto"
+								// borderColor={"#4A5568"}
+								ref={initInput}
+								type='number'
+								fontSize='lg'
+								fontWeight="semibold"
+								textAlign={"center"}
+								border="none"
+								variant={'unstyled'}
+								borderRadius={"none"}
+								id={`turn-${turnIdx}_initiative`}
+								value={turn.initiative}
+								onChange={onChangeInitiative}
+								borderBottom={editMode ? `1px solid ${palette.edit_gray}` : 'none'}
+							/>
+						</Box>
 					</GridItem>
 					<GridItem area="name">
 						<Input
+							bgColor="lightblue"
 							// paddingStart="0.25em"
 							// marginY="0.5rem"
 							// marginEnd="1rem"
+							height="100%"
 							placeholder='Name'
 							fontSize={'lg'}
 							fontWeight="semibold"
@@ -234,20 +271,17 @@ export function TurnCard({ turnIdx, initEditMode }: {
 							borderBottom={editMode ? `1px solid ${palette.edit_gray}` : 'none'}
 						/>
 					</GridItem>
-					<GridItem area="hp_label">
-						<label
-							hidden={!editMode}>
-							<Text
-								color={palette.edit_gray}>HP:</Text>
-						</label>
-					</GridItem>
-					<GridItem area="hp">
+					<GridItem
+						area="hp"
+					>
 						<Input
+							bgColor="khaki"
 							// marginEnd={editMode ? "1rem" : "0.25rem"}
 							// width="1.7em"
-							// padding="0"
 							// marginY="0.5rem"
 							// marginStart="0.25rem"
+
+							paddingEnd="0.25rem"
 							fontWeight={'semibold'}
 							textColor="#9C3030"
 							textAlign={"right"}
@@ -260,66 +294,95 @@ export function TurnCard({ turnIdx, initEditMode }: {
 							onKeyDown={onEnterHP}
 						/>
 					</GridItem>
-					{turn.hasOwnProperty("maxHP") &&
-						// <Container
-						// 	paddingX="0"
-						// 	margin="0"
-						// 	display={"flex"}
-						// 	justifyContent={"end"}
-						// 	alignItems={"center"}
-						// 	width="auto">
-						<>
-							<Flex
-								flexDir="column"
-								justifyContent={"space-around"}
-								alignItems={"center"}
-								fontSize={"0.6em"}
-								textColor="#9C3030"
-								textOverflow={"ellipsis"}
-								hidden={editMode}
-							>
-								<Button
-									// padding="0"
-									// height="1rem"
-									// width="2em"
-									fontSize="1em"
-									variant="ghost"
-									bgColor={addingHP ? "#E7B1B1" : "none"}
-									onClick={() => setAddingHP(true)}>
-									<AddIcon></AddIcon>
-								</Button>
-								<Button
-									// padding="0"
-									// width="2em"
-									// height="1rem"
-									fontSize="1em"
-									variant="ghost"
-									bgColor={addingHP ? "none" : "#E7B1B1"}
-									onClick={() => setAddingHP(false)}>
-									<MinusIcon></MinusIcon>
-								</Button>
-							</Flex>
-							<Input
-								// paddingX="0.5em"
-								// marginStart="0.25rem"
-								// marginEnd="0.5rem"
-								// width={"3em"}
-								fontWeight={'semibold'}
-								size="sm"
-								bgColor={"#E7B1B1"}
-								border="none"
-								borderRadius="8px"
-								boxShadow={"2px 2px 0 black"}
-								type='number'
-								placeholder='ΔHP'
-								onKeyDown={onEnterHPDiff}
-								hidden={editMode}
-							/>
-						</>
-						// </Container>
-					}
+					<GridItem area="hp_diff"
+						bgColor="orange"
+						display={"flex"}
+						justifyContent={"end"}
+						alignItems={"center"}>
+						{/* <Container
+							// width="auto"
+
+							paddingX="0"
+							margin="0"
+							display={"flex"}
+							justifyContent={"end"}
+							alignItems={"center"}
+							> */}
+						<Flex
+							flexDir="column"
+							justifyContent={"space-around"}
+							alignItems={"center"}
+							fontSize={"0.6em"}
+							textColor="#9C3030"
+							textOverflow={"ellipsis"}
+						// hidden={editMode}
+						>
+							<Button
+								padding="0"
+								height="1rem"
+								width="2em"
+								fontSize="1em"
+								variant="ghost"
+								bgColor={addingHP ? "#E7B1B1" : "none"}
+								onClick={() => setAddingHP(true)}>
+								<AddIcon></AddIcon>
+							</Button>
+							<Button
+								padding="0"
+								width="2em"
+								height="1rem"
+								fontSize="1em"
+								variant="ghost"
+								bgColor={addingHP ? "none" : "#E7B1B1"}
+								onClick={() => setAddingHP(false)}>
+								<MinusIcon></MinusIcon>
+							</Button>
+						</Flex>
+						<Input
+							// marginStart="0.25rem"
+							// marginEnd="0.5rem"
+							// width={"3em"}
+
+							margin="0.25rem"
+							// height="100%"
+
+							paddingX="0.5em"
+							fontWeight={'semibold'}
+							size="sm"
+							bgColor={"#E7B1B1"}
+							border="none"
+							borderRadius="8px"
+							boxShadow={"2px 2px 0 black"}
+							type='number'
+							placeholder='ΔHP'
+							onKeyDown={onEnterHPDiff}
+						// hidden={editMode}
+						/>
+						{/* </Container> */}
+					</GridItem>
+
+
+
 					{editMode &&
 						<>
+							<GridItem
+								area="init_label">
+								<label
+									hidden={!editMode}>
+									<Text
+										// ml="0.5em"
+										color={palette.edit_gray}>
+										Initiative:
+									</Text>
+								</label>
+							</GridItem>
+							<GridItem area="hp_label">
+								<label
+									hidden={!editMode}>
+									<Text
+										color={palette.edit_gray}>HP:</Text>
+								</label>
+							</GridItem>
 							<GridItem area="mod_label">
 								<label
 									htmlFor={`turn-${turnIdx}_initMod`}>
@@ -376,8 +439,47 @@ export function TurnCard({ turnIdx, initEditMode }: {
 									onKeyDown={onEnterHP}
 								/>
 							</GridItem>
+							<GridItem area="copies">
+								<Flex
+									flexDir="column"
+									justifyContent={"space-around"}
+									alignItems={"center"}
+									fontSize={"0.6em"}
+									textColor="#9C3030"
+									textOverflow={"ellipsis"}
+								>
+									<Button
+										fontSize="1em"
+										variant="ghost"
+										bgColor={addingHP ? "#E7B1B1" : "none"}
+										onClick={() => setAddingHP(true)}>
+										<AddIcon></AddIcon>
+									</Button>
+									<Button
+										fontSize="1em"
+										variant="ghost"
+										bgColor={addingHP ? "none" : "#E7B1B1"}
+										onClick={() => setAddingHP(false)}>
+										<MinusIcon></MinusIcon>
+									</Button>
+								</Flex>
+								<Input
+									// height="100%"
+									fontWeight={'semibold'}
+									size="sm"
+									bgColor={"#E7B1B1"}
+									border="none"
+									borderRadius="8px"
+									boxShadow={"2px 2px 0 black"}
+									type='number'
+									placeholder='ΔHP'
+									onKeyDown={onEnterHPDiff}
+									hidden={editMode}
+								/>
+							</GridItem>
 						</>
 					}
+
 				</Grid>
 				{/* </CardBody> */}
 			</Card>
