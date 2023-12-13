@@ -36,7 +36,7 @@ export type Turn = {
 	name: string,
 	id?: string
 	hp?: number,
-	maxHP?: number
+	maxHP: number
 	conditions: Condition[]
 	initMod?: number
 }
@@ -44,7 +44,7 @@ export type Turn = {
 export type Condition = {
 	name: string,
 	roundCounter?: number,
-	checked?: boolean 
+	checked?: boolean
 }
 
 export const listWidth = "540px";
@@ -52,15 +52,15 @@ export const savedRound1: Round = {
 	id: "asdf",
 	roundNum: 1,
 	turns: [
-		{ initiative: 1, name: "name_2", conditions: [] },
+		{ initiative: 1, name: "name_2", conditions: [], maxHP: 0 },
 		{
-			initiative: 7, name: "name_3", conditions: [
+			initiative: 7, name: "name_3", maxHP: 0, conditions: [
 				{ name: "condition_1", roundCounter: 3 },
 				{ name: "condition_2", roundCounter: 2 },
 				{ name: "condition_3" }]
 		},
 		{
-			initiative: 33, name: "Volothamp Geddharm", maxHP: 999, hp:999, conditions: [
+			initiative: 33, name: "Volothamp Geddharm", maxHP: 999, hp: 999, conditions: [
 				{ name: "Volothamp Geddharm", roundCounter: 3 },
 				{ name: "condition_2", roundCounter: 2 },
 				{ name: "condition_3" },
@@ -72,36 +72,36 @@ export const savedRound1: Round = {
 				{ name: "condition_9" }
 			]
 		},
-		{ initiative: 2, name: "name_4", maxHP: 14, hp:14, conditions: [] },
+		{ initiative: 2, name: "name_4", maxHP: 14, hp: 14, conditions: [] },
 		{
-			initiative: 33, name: "name_1", maxHP: 14, hp:14, conditions: [
+			initiative: 33, name: "name_1", maxHP: 14, hp: 14, conditions: [
 				{ name: "condition_1", roundCounter: 3 },
 				{ name: "condition_2", roundCounter: 2 },
 				{ name: "condition_3" }
 			]
 		},
-		{ initiative: 1, name: "name_2", conditions: [] },
+		{ initiative: 1, name: "name_2", maxHP: 0, conditions: [] },
 		{
-			initiative: 7, name: "name_3", conditions: [
+			initiative: 7, name: "name_3", maxHP: 0, conditions: [
 				{ name: "condition_1", roundCounter: 3 },
 				{ name: "condition_2", roundCounter: 2 },
 				{ name: "condition_3" }]
 		},
-		{ initiative: 2, name: "name_4", maxHP: 14, hp:14, conditions: [] },
+		{ initiative: 2, name: "name_4", maxHP: 14, hp: 14, conditions: [] },
 		{
-			initiative: 33, name: "name_1", maxHP: 14, hp:14, conditions: [
+			initiative: 33, name: "name_1", maxHP: 14, hp: 14, conditions: [
 				{ name: "condition_1", roundCounter: 3 },
 				{ name: "condition_2", roundCounter: 2 },
 				{ name: "condition_3" }
 			]
 		},
-		{ initiative: 1, name: "name_2", conditions: [] },
+		{ initiative: 1, name: "name_2", maxHP: 0, conditions: [] },
 		{
-			initiative: 7, name: "name_3", conditions: [
+			initiative: 7, name: "name_3", maxHP: 0, conditions: [
 				{ name: "condition_1", roundCounter: 3 },
 				{ name: "condition_2", roundCounter: 2 },
 				{ name: "condition_3" }]
 		},
-		{ initiative: 2, name: "name_4", maxHP: 14, hp:14, conditions: [] }
+		{ initiative: 2, name: "name_4", maxHP: 14, hp: 14, conditions: [] }
 	]
 };

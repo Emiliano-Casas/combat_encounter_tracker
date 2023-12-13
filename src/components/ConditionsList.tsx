@@ -90,7 +90,7 @@ export function ConditionsList({ turnIdx }: { turnIdx: number }) {
 		}
 	}
 	const onClickCondition = (e: MouseEvent<HTMLButtonElement>, conditionIndex: number) => {
-		e.preventDefault();
+		// e.preventDefault();
 		const newRound = { ...localRound };
 		newRound.turns[turnIdx].conditions[conditionIndex].checked = !newRound.turns[turnIdx].conditions[conditionIndex].checked;
 		updateRound(newRound);

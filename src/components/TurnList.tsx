@@ -12,8 +12,8 @@ export function TurnList({ addedNewTurn }: { addedNewTurn: boolean }) {
 			<TurnCard
 				key={"turn_" + idx}
 				turnIdx={idx}
-				initEditMode={addedNewTurn && idx == turns.length - 1}
-				// initEditMode={true}
+				// initEditMode={addedNewTurn && idx == turns.length - 1}
+				initEditMode={true}
 			/>
 		)
 	});
