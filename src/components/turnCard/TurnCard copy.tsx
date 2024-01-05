@@ -21,16 +21,16 @@ import {
 	MouseEvent,
 	useRef
 } from 'react';
-import { listWidth, palette, Round } from '../constants'
+import { listWidth, palette, Round } from '../../constants'
 import {
 	EditIcon,
 	AddIcon,
 	MinusIcon,
 	SmallAddIcon,
 } from '@chakra-ui/icons';
-import { RoundContext } from "../RoundProvider";
+import { RoundContext } from "../../RoundProvider";
 import { FaSave, FaDownload } from 'react-icons/fa'
-import { ConditionsList } from './ConditionsList'
+import { ConditionsList } from '../ConditionsList'
 import { OverlayedGridItem } from './OverlayedGridItem'
 
 export function TurnCard({ turnIdx, initEditMode }: {
@@ -48,6 +48,7 @@ export function TurnCard({ turnIdx, initEditMode }: {
 	const nameInput = useRef<HTMLInputElement>(null);
 	const hpInput = useRef<HTMLInputElement>(null);
 	const hpDiffInput = useRef<HTMLInputElement>(null);
+	const copiesInput = useRef<HTMLInputElement>(null);
 
 	const turn = localRound.turns[turnIdx];
 
@@ -115,10 +116,15 @@ export function TurnCard({ turnIdx, initEditMode }: {
 		gridTemplateColumns: ''
 	}
 	if (editMode) {
-		gridTemplate.templateAreas = `"init_label init name hp_label  hp"
-																	"mod_label  mod  copies max_label max"`;
-		gridTemplate.gridTemplateRows = '1fr 1fr'
-		gridTemplate.gridTemplateColumns = 'auto auto auto  auto auto';
+		gridTemplate.templateAreas = `"name copies"
+																	"init hp"
+																	"mod max"`;
+		gridTemplate.gridTemplateRows = '1fr 1fr 1fr'
+		gridTemplate.gridTemplateColumns = 'auto auto auto auto';
+		// gridTemplate.templateAreas = `"init_label init name hp_label  hp"
+		// 															"mod_label  mod  copies max_label max"`;
+		// gridTemplate.gridTemplateRows = '1fr 1fr'
+		// gridTemplate.gridTemplateColumns = 'auto auto auto auto auto';
 	} else {
 		gridTemplate.templateAreas = `"init name ${turn.maxHP > 0 ? 'hp hp_diff_b hp_diff' : ''}"`;
 		gridTemplate.gridTemplateRows = '1fr'
@@ -200,9 +206,10 @@ export function TurnCard({ turnIdx, initEditMode }: {
 				>
 
 					<OverlayedGridItem
+						area="name"
 						inputRef={nameInput}
 						openEditButtons={editButtons.onOpen}
-						area="name"
+						bgColor="lightblue"
 					>
 						<Input
 							// bgColor="lightblue"
@@ -221,39 +228,50 @@ export function TurnCard({ turnIdx, initEditMode }: {
 						/>
 					</OverlayedGridItem>
 
-					{!editMode &&
-						<OverlayedGridItem
-							inputRef={initInput}
-							openEditButtons={editButtons.onOpen}
-							area="init">
-							<Input
-								// bgColor="lightgreen"
+					<OverlayedGridItem
+						area="init"
+						inputRef={initInput}
+						openEditButtons={editButtons.onOpen}
+						bgColor="lightgreen">
+						<label
+							hidden={!editMode}>
+							<Text
+								color={palette.edit_gray}>
+								Score:
+							</Text>
+						</label>
+						<Input
+							// bgColor="lightgreen"
 
-								maxWidth="1.5rem"
-								marginX="0.25rem"
-								type='number'
-								fontSize='lg'
-								fontWeight="semibold"
-								textAlign={"center"}
-								border="none"
-								variant={'unstyled'}
-								borderRadius={"none"}
-								ref={initInput}
-								id={`turn-${turnIdx}_initiative`}
-								value={turn.initiative}
-								onChange={onChangeInitiative}
-								borderBottom={editMode ? `1px solid ${palette.edit_gray}` : 'none'}
-							/>
-						</OverlayedGridItem>
-					}
+							maxWidth="1.5rem"
+							marginX="0.25rem"
+							type='number'
+							fontSize='lg'
+							fontWeight="semibold"
+							textAlign={"center"}
+							border="none"
+							variant={'unstyled'}
+							borderRadius={"none"}
+							ref={initInput}
+							id={`turn-${turnIdx}_initiative`}
+							value={turn.initiative}
+							onChange={onChangeInitiative}
+							borderBottom={editMode ? `1px solid ${palette.edit_gray}` : 'none'}
+						/>
+					</OverlayedGridItem>
 
-					{turn.maxHP > 0 &&
+					{(turn.maxHP > 0 || editMode) &&
 						<>
 							<OverlayedGridItem
 								inputRef={hpInput}
 								openEditButtons={editButtons.onOpen}
 								area="hp"
-							>
+								bgColor="khaki">
+								<label
+									hidden={!editMode}>
+									<Text
+										color={palette.edit_gray}>HP:</Text>
+								</label>
 								<Input
 									// bgColor="khaki"
 									marginX="0.25rem"
@@ -272,37 +290,8 @@ export function TurnCard({ turnIdx, initEditMode }: {
 									onKeyDown={onEnterHP}
 								/>
 							</OverlayedGridItem>
-							<GridItem
-								// bgColor="brown"
-
-								area="hp_diff_b"
-								display="flex"
-								flexDir="column"
-								justifyContent={"center"}
-								alignItems={"center"}
-								textColor="#9C3030"
-								hidden={editMode}
-							>
-								<Button
-									height="1rem"
-									fontSize="0.75rem"
-									variant="ghost"
-									bgColor={addingHP ? "#E7B1B1" : "none"}
-									onClick={() => setAddingHP(true)}>
-									<AddIcon></AddIcon>
-								</Button>
-								<Button
-									// padding="0"
-									height="1rem"
-									fontSize="0.75rem"
-									variant="ghost"
-									bgColor={addingHP ? "none" : "#E7B1B1"}
-									onClick={() => setAddingHP(false)}>
-									<MinusIcon></MinusIcon>
-								</Button>
-							</GridItem>
 							<OverlayedGridItem
-								// bgColor="orange"
+								bgColor="orange"
 
 								inputRef={hpDiffInput}
 								openEditButtons={editButtons.onOpen}
@@ -325,49 +314,40 @@ export function TurnCard({ turnIdx, initEditMode }: {
 									onKeyDown={onEnterHP}
 								/>
 							</OverlayedGridItem>
+
+							<OverlayedGridItem
+								bgColor="gray.300"
+
+								inputRef={hpDiffInput}
+								openEditButtons={editButtons.onOpen}
+								area="copies"
+								hidden={editMode}
+							>
+								<label>
+									<Text
+										color={palette.edit_gray}>asdfasdfasdf</Text>
+								</label>
+								<Input
+									width={"3rem"}
+									margin="0.25rem"
+									paddingX="0.5em"
+									fontWeight={'semibold'}
+									size="sm"
+									bgColor={"#E7B1B1"}
+									border="none"
+									borderRadius="8px"
+									boxShadow={"2px 2px 0 black"}
+									type='number'
+									placeholder='ΔHP'
+									ref={hpDiffInput}
+									onKeyDown={onEnterHP}
+								/>
+							</OverlayedGridItem>
 						</>
 					}
 
-					{editMode &&
+					{false &&
 						<>
-							<OverlayedGridItem
-								inputRef={initInput}
-								openEditButtons={editButtons.onOpen}
-								area="init">
-								<label
-									hidden={!editMode}>
-									<Text
-										// ml="0.5em"
-										color={palette.edit_gray}>
-										Score:
-									</Text>
-								</label>
-								<Input
-									// bgColor="lightgreen"
-
-									maxWidth="1.5rem"
-									marginX="0.25rem"
-									type='number'
-									fontSize='lg'
-									fontWeight="semibold"
-									textAlign={"center"}
-									border="none"
-									variant={'unstyled'}
-									borderRadius={"none"}
-									ref={initInput}
-									id={`turn-${turnIdx}_initiative`}
-									value={turn.initiative}
-									onChange={onChangeInitiative}
-									borderBottom={editMode ? `1px solid ${palette.edit_gray}` : 'none'}
-								/>
-							</OverlayedGridItem>
-							<GridItem area="hp_label">
-								<label
-									hidden={!editMode}>
-									<Text
-										color={palette.edit_gray}>HP:</Text>
-								</label>
-							</GridItem>
 							<GridItem area="mod_label">
 								<label
 									htmlFor={`turn-${turnIdx}_initMod`}>
@@ -424,44 +404,6 @@ export function TurnCard({ turnIdx, initEditMode }: {
 									onKeyDown={onEnterHP}
 								/>
 							</GridItem>
-							<GridItem area="copies">
-								<Flex
-									flexDir="column"
-									justifyContent={"space-around"}
-									alignItems={"center"}
-									fontSize={"0.6em"}
-									textColor="#9C3030"
-									textOverflow={"ellipsis"}
-								>
-									<Button
-										fontSize="1em"
-										variant="ghost"
-										bgColor={addingHP ? "#E7B1B1" : "none"}
-										onClick={() => setAddingHP(true)}>
-										<AddIcon></AddIcon>
-									</Button>
-									<Button
-										fontSize="1em"
-										variant="ghost"
-										bgColor={addingHP ? "none" : "#E7B1B1"}
-										onClick={() => setAddingHP(false)}>
-										<MinusIcon></MinusIcon>
-									</Button>
-								</Flex>
-								<Input
-									// height="100%"
-									fontWeight={'semibold'}
-									size="sm"
-									bgColor={"#E7B1B1"}
-									border="none"
-									borderRadius="8px"
-									boxShadow={"2px 2px 0 black"}
-									type='number'
-									placeholder='ΔHP'
-									onKeyDown={onEnterHPDiff}
-									hidden={editMode}
-								/>
-							</GridItem>
 						</>
 					}
 
@@ -471,5 +413,225 @@ export function TurnCard({ turnIdx, initEditMode }: {
 				<ConditionsList turnIdx={turnIdx} />
 			}
 		</Box >
+	)
+}
+
+const editMode = () => {
+	return (
+		<Grid
+					borderRadius="10px"
+					boxShadow={"2px 2px 0 black"}
+					fontSize={'lg'}
+					fontWeight="semibold"
+					minHeight="3rem"
+					bgColor={turn.maxHP > 0 ? palette.health_red : palette.light_purple}
+					templateAreas={gridTemplate.templateAreas}
+					gridTemplateRows={gridTemplate.gridTemplateRows}
+					gridTemplateColumns={gridTemplate.gridTemplateColumns}
+				>
+
+					<OverlayedGridItem
+						area="name"
+						inputRef={nameInput}
+						openEditButtons={editButtons.onOpen}
+						bgColor="lightblue"
+					>
+						<Input
+							// bgColor="lightblue"
+
+							marginX="0.25rem"
+							placeholder='Name'
+							fontSize={'lg'}
+							fontWeight="semibold"
+							border="none"
+							variant={'unstyled'}
+							borderRadius={"none"}
+							ref={nameInput}
+							value={turn.name}
+							onChange={onChangeName}
+							borderBottom={editMode ? `1px solid ${palette.edit_gray}` : 'none'}
+						/>
+					</OverlayedGridItem>
+
+					<OverlayedGridItem
+						area="init"
+						inputRef={initInput}
+						openEditButtons={editButtons.onOpen}
+						bgColor="lightgreen">
+						<label
+							hidden={!editMode}>
+							<Text
+								color={palette.edit_gray}>
+								Score:
+							</Text>
+						</label>
+						<Input
+							// bgColor="lightgreen"
+
+							maxWidth="1.5rem"
+							marginX="0.25rem"
+							type='number'
+							fontSize='lg'
+							fontWeight="semibold"
+							textAlign={"center"}
+							border="none"
+							variant={'unstyled'}
+							borderRadius={"none"}
+							ref={initInput}
+							id={`turn-${turnIdx}_initiative`}
+							value={turn.initiative}
+							onChange={onChangeInitiative}
+							borderBottom={editMode ? `1px solid ${palette.edit_gray}` : 'none'}
+						/>
+					</OverlayedGridItem>
+
+					{(turn.maxHP > 0 || editMode) &&
+						<>
+							<OverlayedGridItem
+								inputRef={hpInput}
+								openEditButtons={editButtons.onOpen}
+								area="hp"
+								bgColor="khaki">
+								<label
+									hidden={!editMode}>
+									<Text
+										color={palette.edit_gray}>HP:</Text>
+								</label>
+								<Input
+									// bgColor="khaki"
+									marginX="0.25rem"
+									width="4rem"
+									paddingEnd="0.25rem"
+									fontWeight={'semibold'}
+									textColor="#9C3030"
+									textAlign={"right"}
+									variant={'unstyled'}
+									border="none"
+									borderRadius={"none"}
+									ref={hpInput}
+									borderBottom={editMode ? '1px' : 'none'}
+									fontSize={editMode ? 'lg' : '3xl'}
+									value={turn.hp}
+									onKeyDown={onEnterHP}
+								/>
+							</OverlayedGridItem>
+							<OverlayedGridItem
+								bgColor="orange"
+
+								inputRef={hpDiffInput}
+								openEditButtons={editButtons.onOpen}
+								area="hp_diff"
+								hidden={editMode}
+							>
+								<Input
+									width={"3rem"}
+									margin="0.25rem"
+									paddingX="0.5em"
+									fontWeight={'semibold'}
+									size="sm"
+									bgColor={"#E7B1B1"}
+									border="none"
+									borderRadius="8px"
+									boxShadow={"2px 2px 0 black"}
+									type='number'
+									placeholder='ΔHP'
+									ref={hpDiffInput}
+									onKeyDown={onEnterHP}
+								/>
+							</OverlayedGridItem>
+
+							<OverlayedGridItem
+								bgColor="gray.300"
+
+								inputRef={hpDiffInput}
+								openEditButtons={editButtons.onOpen}
+								area="copies"
+								hidden={editMode}
+							>
+								<label>
+									<Text
+										color={palette.edit_gray}>asdfasdfasdf</Text>
+								</label>
+								<Input
+									width={"3rem"}
+									margin="0.25rem"
+									paddingX="0.5em"
+									fontWeight={'semibold'}
+									size="sm"
+									bgColor={"#E7B1B1"}
+									border="none"
+									borderRadius="8px"
+									boxShadow={"2px 2px 0 black"}
+									type='number'
+									placeholder='ΔHP'
+									ref={hpDiffInput}
+									onKeyDown={onEnterHP}
+								/>
+							</OverlayedGridItem>
+						</>
+					}
+
+					{false &&
+						<>
+							<GridItem area="mod_label">
+								<label
+									htmlFor={`turn-${turnIdx}_initMod`}>
+									<Text
+										// ml="0.5em"
+										color={palette.edit_gray}>
+										Roll:
+									</Text>
+								</label>
+							</GridItem>
+							<GridItem area="mod">
+								<Input
+									// paddingStart={"0"}
+									// marginX="0.25em"
+									// maxWidth="1.5em"
+									type='number'
+									fontSize='lg'
+									fontWeight="semibold"
+									textAlign={"center"}
+									border="none"
+									variant={'unstyled'}
+									borderRadius={"none"}
+									borderColor={"#4A5568"}
+									placeholder="0"
+									id={`turn-${turnIdx}_initMod`}
+									value={turn.initMod}
+									onChange={onChangeInitiative}
+									borderBottom={editMode ? `1px solid ${palette.edit_gray}` : 'none'}
+								/>
+							</GridItem>
+							<GridItem area="max_label">
+								<label
+									hidden={!editMode}>
+									<Text
+										color={palette.edit_gray}>Max HP:</Text>
+								</label>
+							</GridItem>
+							<GridItem area="max">
+								<Input
+									// marginEnd={editMode ? "1rem" : "0.25rem"}
+									// width="1.7em"
+									// padding="0"
+									// marginY="0.5rem"
+									// marginStart="0.25rem"
+									fontWeight={'semibold'}
+									textColor="#9C3030"
+									textAlign={"right"}
+									variant={'unstyled'}
+									border="none"
+									borderRadius={"none"}
+									borderBottom={editMode ? '1px' : 'none'}
+									fontSize={editMode ? 'lg' : '3xl'}
+									value={turn.hp}
+									onKeyDown={onEnterHP}
+								/>
+							</GridItem>
+						</>
+					}
+
+				</Grid>
 	)
 }

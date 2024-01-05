@@ -1,6 +1,6 @@
 import './App.css';
 import { Nav } from './components/Nav';
-import { Box } from '@chakra-ui/react';
+import { Box, theme } from '@chakra-ui/react';
 import { TurnList } from './components/TurnList';
 import { Footer } from './components/Footer';
 import { RoundProvider } from './RoundProvider';
@@ -8,7 +8,7 @@ import { useState } from 'react';
 
 function App() {
 	const [addedNewTurn, setAddedNewTurn] = useState(false);
-
+	console.log(theme);
 	return (
 		<RoundProvider>
 			<Box

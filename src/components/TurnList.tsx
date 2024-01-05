@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import { TurnCard } from "./TurnCard";
+import { TurnCard } from "./turnCard/TurnCard";
 import { ReactElement, useContext } from "react";
 import { RoundContext } from "../RoundProvider";
 

@@ -7,23 +7,22 @@ import {
 } from 'react';
 import {
 	Box,
+	BoxProps,
 	Button,
-	GridItem,
-	GridItemProps
 } from '@chakra-ui/react';
 
-export function OverlayedGridItem(
+export function OverlayedInput(
 	{
 		children,
 		inputRef,
 		openEditButtons,
-		...gridItemProps
+		...boxProps
 	}: {
 		children: any,
 		inputRef: RefObject<HTMLInputElement>,
-		openEditButtons: () => void 
-	} & GridItemProps) {
-		const [overlayHidden, setOverlayHidden] = useState(false);
+		openEditButtons: () => void
+	} & BoxProps) {
+	const [overlayHidden, setOverlayHidden] = useState(false);
 
 	const overlay = useRef<HTMLButtonElement>(null);
 
@@ -45,29 +44,26 @@ export function OverlayedGridItem(
 	}
 
 	return (
-		<GridItem {...gridItemProps}>
-			<Box
+		<Box
+			position="relative"
+			display="flex"
+			alignItems="center"
+			justifyContent={"center"}
+			{...boxProps}
+		>
+			<Button
+				zIndex={1}
+				borderRadius={"none"}
+				position={"absolute"}
 				height="100%"
 				width="100%"
-				position="relative"
-				display="flex"
-				alignItems="center"
-				justifyContent={"center"}
-			>
-				<Button
-					zIndex={1}
-					borderRadius={"none"}
-					position={"absolute"}
-					height="100%"
-					width="100%"
-					cursor="pointer"
-					variant={'unstyled'}
-					ref={overlay}
-					onClick={onClickOverlay}
-					hidden={overlayHidden}
-				/>
-				{children}
-			</Box>
-		</GridItem>
+				cursor="pointer"
+				variant={'unstyled'}
+				ref={overlay}
+				onClick={onClickOverlay}
+				hidden={overlayHidden}
+			/>
+			{children}
+		</Box>
 	)
 }
