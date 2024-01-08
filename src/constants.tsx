@@ -22,7 +22,9 @@ export const palette = {
 	dim_gray: "#69686e",
 	edit_gray: "#4A5568",
 	health_red: "#F0D0D0",
-	light_purple: "#E7D0F0"
+	light_purple: "#E7D0F0",
+	input_red: "#E7B1B1",
+	input_purple: "#e7b1e6"
 }
 
 export type Round = {

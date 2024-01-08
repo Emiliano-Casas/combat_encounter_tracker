@@ -33,6 +33,8 @@ import { RoundContext } from "../../RoundProvider";
 import { FaSave, FaDownload } from 'react-icons/fa'
 import { ConditionsList } from '../ConditionsList'
 import { OverlayedInput } from './OverlayedInput'
+import { CardInput } from './CardInput';
+import { CardLabel } from './CardLabel';
 
 export function TurnCard({ turnIdx, initEditMode }: {
 	turnIdx: number,
@@ -135,6 +137,7 @@ const EditMode = ({ turnIdx, editDisclosure }: {
 	const turn = localRound.turns[turnIdx];
 
 	const initInput = useRef<HTMLInputElement>(null);
+	const initMod = useRef<HTMLInputElement>(null);
 	const nameInput = useRef<HTMLInputElement>(null);
 	const hpInput = useRef<HTMLInputElement>(null);
 	const hpDiffInput = useRef<HTMLInputElement>(null);
@@ -172,198 +175,204 @@ const EditMode = ({ turnIdx, editDisclosure }: {
 	};
 
 	return (
-		<Box
+		<Grid
+			gridTemplateAreas={`"name name"
+													"initiative hp"`}
+			gridTemplateColumns={`1fr 1fr`}
 			borderRadius="10px"
-			boxShadow={"2px 2px 0 black"}
+			border="1px"
 			fontSize={'lg'}
 			fontWeight="semibold"
 			minHeight="3rem"
 			bgColor={turn.maxHP > 0 ? palette.health_red : palette.light_purple}>
 
-			<Flex>
+			{/* NAME & COPIES */}
+			<GridItem
+				area="name"
+				display="flex">
 				<OverlayedInput
-					bgColor="lightblue"
-
-					padding={2}
+					p={4}
+					pe={2}
 					flex={1}
 					inputRef={nameInput}
 					openEditButtons={editDisclosure.onOpen}>
-					<Input
+					<CardInput
 						placeholder='Name'
-						fontSize={'lg'}
-						fontWeight="semibold"
-						border="none"
 						textAlign={"center"}
-						variant={'unstyled'}
-						borderRadius={"none"}
 						ref={nameInput}
 						value={turn.name}
 						onChange={onChangeName}
 						borderBottom={`1px solid ${palette.edit_gray}`}
 					/>
 				</OverlayedInput>
-
 				<OverlayedInput
-					bgColor="gray.300"
-					padding={2}
+					p={4}
+					ps={2}
 					inputRef={hpDiffInput}
 					openEditButtons={editDisclosure.onOpen}
 				>
-					<label>
-						<Text
-							whiteSpace={"nowrap"}
-							color={palette.edit_gray}>How many?</Text>
-					</label>
+					<CardLabel text="How many?" />
 					<Input
+						placeholder='#'
 						width={12}
 						ms={1}
 						fontWeight={'semibold'}
 						size="sm"
-						bgColor={"#E7B1B1"}
-						border="none"
+						bgColor={turn.maxHP > 0 ? palette.input_red : palette.input_purple}
 						borderRadius={"lg"}
-						boxShadow={"2px 2px 0 black"}
+						border="1px"
 						type='number'
 						textAlign={"center"}
-						placeholder='#'
 						ref={hpDiffInput}
 						onKeyDown={onEnterHP}
 					/>
 				</OverlayedInput>
-			</Flex>
+			</GridItem>
 
-			<Flex
-				bgColor="teal.500"
+			{/* INITITIVE */}
+			<GridItem
+				area="initiative"
+				display="flex"
 				flexDir={"column"}
 			>
+
+				{/* RESULT */}
 				<OverlayedInput
-					bgColor="lightgreen"
 					inputRef={initInput}
 					openEditButtons={editDisclosure.onOpen}>
 					<Flex
-						bgColor="blue.300"
-						mx={2}
+						bgColor={turn.maxHP > 0 ? palette.input_red : palette.input_purple}
+						ms={4}
+						me={2}
 						mt={2}
 						px={6}
-						py={4}
+						py={6}
 						borderTopRadius={"xl"}
-						width="100%">
-						<label>
-							<Text
-								color={palette.edit_gray}>
-								Result:
-							</Text>
-						</label>
-						<Input
-							// maxWidth="1.5rem"
-							// marginX="0.25rem"
-							mx={2}
-							type='number'
-							fontSize='lg'
-							fontWeight="semibold"
-							textAlign={"center"}
-							border="none"
-							variant={'unstyled'}
-							borderRadius={"none"}
+						width="100%"
+						position="relative"
+						borderX={"1px"}
+						borderTop={"1px"}
+					>
+						<Text
+							px={2}
+							lineHeight={'4'}
+							borderX="1px"
+							bg={`linear-gradient(0deg, ${turn.maxHP > 0 ? palette.input_red : palette.input_purple} 0%, ${turn.maxHP > 0 ? palette.health_red : palette.light_purple} 100%)`}
+							position="absolute"
+							top={-2}
+						>Initiative</Text>
+						<CardLabel text="Result:" />
+						<CardInput
 							ref={initInput}
+							ms={2}
+							type='number'
+							placeholder={"initiative score"}
 							id={`turn-${turnIdx}_initiative`}
 							value={turn.initiative}
-							onChange={onChangeInitiative}
-							borderBottom={`1px solid ${palette.edit_gray}`}
-						/>
+							onChange={onChangeInitiative} />
 					</Flex>
 				</OverlayedInput>
+
+				{/* MODIFIER */}
 				<OverlayedInput
-					bgColor="orange"
-					inputRef={initInput}
+					inputRef={initMod}
 					openEditButtons={editDisclosure.onOpen}>
 					<Flex
-						bgColor="blue.300"
-						mx={2}
-						mb={2}
+						bgColor={turn.maxHP > 0 ? palette.input_red : palette.input_purple}
+						ms={4}
+						me={2}
+						mb={4}
 						px={6}
-						py={4}
+						pb={6}
 						borderBottomRadius={"xl"}
-						width="100%">
-						<label>
-							<Text
-								whiteSpace={"nowrap"}
-								color={palette.edit_gray}>
-								Roll 1d20:
-							</Text>
-						</label>
-						<Input
-							mx={2}
+						width="100%"
+						borderX={"1px"}
+						borderBottom={"1px"}>
+						<CardLabel text="Roll 1d20:" />
+						<CardInput
+							ms={2}
 							type='number'
-							fontSize='lg'
-							fontWeight="semibold"
-							textAlign={"center"}
-							border="none"
-							variant={'unstyled'}
-							borderRadius={"none"}
-							ref={initInput}
+							placeholder='± modifier'
+							ref={initMod}
 							id={`turn-${turnIdx}_initiative`}
-							value={turn.initiative}
+							value={turn.initMod}
 							onChange={onChangeInitiative}
 							borderBottom={`1px solid ${palette.edit_gray}`}
 						/>
 					</Flex>
 				</OverlayedInput>
-			</Flex>
+			</GridItem>
 
-			<Flex>
+			{/* HP */}
+			<GridItem
+				area="hp"
+				display="flex"
+				flexDir="column">
+
+				{/* CURRENT */}
 				<OverlayedInput
-					bgColor="khaki"
 					inputRef={hpInput}
 					openEditButtons={editDisclosure.onOpen}>
-					<label>
+					<Flex
+						bgColor={turn.maxHP > 0 ? palette.input_red : palette.input_purple}
+						me={4}
+						ms={2}
+						mt={2}
+						px={6}
+						py={6}
+						borderTopRadius={"xl"}
+						width="100%"
+						position="relative"
+						borderX={"1px"}
+						borderTop={"1px"}>
 						<Text
-							color={palette.edit_gray}>Current:</Text>
-					</label>
-					<Input
-						marginX="0.25rem"
-						width="4rem"
-						paddingEnd="0.25rem"
-						fontWeight={'semibold'}
-						textColor="#9C3030"
-						textAlign={"right"}
-						variant={'unstyled'}
-						border="none"
-						borderRadius={"none"}
-						ref={hpInput}
-						borderBottom={'1px'}
-						fontSize={'lg'}
-						value={turn.hp}
-						onKeyDown={onEnterHP}
-					/>
+							px={2}
+							lineHeight={'4'}
+							borderX="1px"
+							bg={`linear-gradient(0deg, ${turn.maxHP > 0 ? palette.input_red : palette.input_purple} 0%, ${turn.maxHP > 0 ? palette.health_red : palette.light_purple} 100%)`}
+							position="absolute"
+							top={-2}
+						>Hit Points</Text>
+						<CardLabel text="Current:" />
+						<CardInput
+							ms={2}
+							type="number"
+							placeholder='999'
+							ref={hpInput}
+							value={turn.hp}
+							onKeyDown={onEnterHP}
+						/>
+					</Flex>
 				</OverlayedInput>
+
+				{/* MAX */}
 				<OverlayedInput
-					bgColor="teal.200"
 					inputRef={hpInput}
 					openEditButtons={editDisclosure.onOpen}>
-					<label>
-						<Text
-							color={palette.edit_gray}>Max:</Text>
-					</label>
-					<Input
-						marginX="0.25rem"
-						width="4rem"
-						paddingEnd="0.25rem"
-						fontWeight={'semibold'}
-						textColor="#9C3030"
-						textAlign={"right"}
-						variant={'unstyled'}
-						border="none"
-						borderRadius={"none"}
-						ref={hpInput}
-						borderBottom={'1px'}
-						fontSize={'lg'}
-						value={turn.hp}
-						onKeyDown={onEnterHP}
-					/>
+					<Flex
+						bgColor={turn.maxHP > 0 ? palette.input_red : palette.input_purple}
+						me={4}
+						ms={2}
+						mb={4}
+						px={6}
+						pb={6}
+						borderBottomRadius={"xl"}
+						width="100%"
+						borderX={"1px"}
+						borderBottom={"1px"}>
+						<CardLabel text="Max:" />
+						<CardInput
+							ms={2}
+							type="number"
+							placeholder='999'
+							ref={hpInput}
+							value={turn.hp}
+							onKeyDown={onEnterHP}
+						/>
+					</Flex>
 				</OverlayedInput>
-			</Flex>
-		</Box>
+			</GridItem>
+		</Grid>
 	)
 }
 
